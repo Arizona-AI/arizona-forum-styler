@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Arizona Forum Styler</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-img"></div>
+        <div class="logo-text">
+          <h1>ARIZONA</h1>
+          <span class="logo-sub">FORUM STYLER</span>
+        </div>
+      </div>
+      <div class="toggle-wrapper">
+        <label class="switch">
+          <input type="checkbox" id="extension-toggle" checked>
+          <span class="slider round"></span>
+        </label>
+        <span class="toggle-status" id="toggle-status-text">Вкл</span>
+      </div>
+    </header>
+
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="presets-tab"><span class="menu-icon icon-star"></span>Готовые
+        темы</button>
+      <button class="tab-btn" data-tab="customizer-tab"><span class="menu-icon icon-magic"></span>Подробная
+        настройка</button>
+      <button class="tab-btn" data-tab="tweaks-tab"><span class="menu-icon icon-wrench"></span>Твики</button>
+      <button class="tab-btn" data-tab="share-tab"><span class="menu-icon icon-import"></span>Импорт/Экспорт</button>
+    </nav>
+
+    <main class="tab-content">
+
+      <section id="presets-tab" class="tab-panel active">
+        <div class="presets-container">
+          <a href="https://discord.gg/5DbTZzQMWH" target="_blank" class="btn btn-primary"
+            style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%); border: none;">
+            <span class="menu-icon icon-discord-solid"
+              style="-webkit-mask-image: url('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/svgs/brands/discord.svg'); mask-image: url('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/svgs/brands/discord.svg'); background-color: currentColor; display: inline-block; width: 14px; height: 14px; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center; mask-position: center;"></span>
+            Темы сообщества
+          </a>
+          <div class="search-bar-wrapper" style="margin-bottom: 12px; position: relative;">
+            <input type="text" id="preset-search" placeholder="Поиск темы по названию..." class="custom-input">
+            <span class="menu-icon icon-search"></span>
+          </div>
+
+          <div class="presets-random-actions" style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <button id="btn-random-theme" class="btn"
+              style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;"><span
+                class="menu-icon icon-star"></span>Случайная тема</button>
+            <button id="btn-random-settings" class="btn"
+              style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--pop-border); color: var(--pop-text);"><span
+                class="menu-icon icon-magic"></span>Случайные настройки</button>
+          </div>
+
+          <div id="favorites-section" style="display: none; margin-bottom: 16px;">
+            <div class="presets-section-header">⭐ Избранные темы</div>
+            <div class="presets-grid" id="presets-grid-favorites">
+            </div>
+          </div>
+
+          <div id="dark-presets-section">
+            <div class="presets-section-header">Тёмные темы</div>
+            <div class="presets-grid" id="presets-grid-dark">
+            </div>
+          </div>
+
+          <div id="light-presets-section" style="margin-top: 16px;">
+            <div class="presets-section-header">Светлые темы</div>
+            <div class="presets-grid" id="presets-grid-light">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="customizer-tab" class="tab-panel">
+        <div class="customizer-scroll">
+
+          <div class="control-group-title"><span class="menu-icon icon-settings"></span>Базовые настройки</div>
+          <div class="control-card">
+            <div class="control-row">
+              <label><span class="menu-icon icon-mode"></span>Режим темы</label>
+              <div class="segmented-control">
+                <input type="radio" id="mode-dark" name="theme-mode" value="dark" checked>
+                <label for="mode-dark">Тёмный</label>
+                <input type="radio" id="mode-light" name="theme-mode" value="light">
+                <label for="mode-light">Светлый</label>
+              </div>
+            </div>
+
+            <div class="control-row">
+              <label for="font-select"><span class="menu-icon icon-font"></span>Шрифт</label>
+              <select id="font-select" class="custom-select">
+                <option value="default">По умолчанию</option>
+                <option value="'Outfit', sans-serif">Outfit (Современный)</option>
+                <option value="'Inter', sans-serif">Inter (Чистый)</option>
+                <option value="'Montserrat', sans-serif">Montserrat (Стильный)</option>
+                <option value="'Roboto', sans-serif">Roboto (Классика)</option>
+                <option value="system-ui, sans-serif">Системный</option>
+                <option value="'JetBrains Mono', monospace">JetBrains Mono (Кодер)</option>
+                <option value="'Playfair Display', serif">Playfair Display (Элегантный)</option>
+                <option value="'Poppins', sans-serif">Poppins (Геометрический)</option>
+                <option value="'Fira Sans', sans-serif">Fira Sans (Четкий)</option>
+                <option value="'Oswald', sans-serif">Oswald (Строгий)</option>
+                <option value="'Raleway', sans-serif">Raleway (Художественный)</option>
+                <option value="'Nunito', sans-serif">Nunito (Мягкий)</option>
+                <option value="'Rubik', sans-serif">Rubik (Закругленный)</option>
+                <option value="'Ubuntu', sans-serif">Ubuntu (Технологичный)</option>
+                <option value="'Comfortaa', cursive">Comfortaa (Игровой)</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="font-apply-select"><span class="menu-icon icon-settings"></span>Применение шрифта</label>
+              <select id="font-apply-select" class="custom-select">
+                <option value="partial">Частичный</option>
+                <option value="all">На весь текст на всех страницах</option>
+                <option value="exclude-messages">На весь текст, кроме сообщений в темах</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="font-weight-select"><span class="menu-icon icon-weight"></span>Толщина шрифта</label>
+              <select id="font-weight-select" class="custom-select">
+                <option value="default">По умолчанию</option>
+                <option value="100">Сверхтонкий (100)</option>
+                <option value="200">Ультратонкий (200)</option>
+                <option value="300">Тонкий (300)</option>
+                <option value="400">Обычный (400)</option>
+                <option value="500">Средний (500)</option>
+                <option value="600">Полужирный (600)</option>
+                <option value="700">Жирный (700)</option>
+                <option value="800">Сверхжирный (800)</option>
+                <option value="900">Ультражирный (900)</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="font-size-select"><span class="menu-icon icon-font"></span>Размер шрифта</label>
+              <select id="font-size-select" class="custom-select">
+                <option value="default">По умолчанию</option>
+                <option value="12px">12px (Очень маленький)</option>
+                <option value="13px">13px (Маленький)</option>
+                <option value="14px">14px (Нормальный)</option>
+                <option value="15px">15px (Средний)</option>
+                <option value="16px">16px (Увеличенный)</option>
+                <option value="17px">17px (Большой)</option>
+                <option value="18px">18px (Очень большой)</option>
+                <option value="20px">20px (Огромный)</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-banned-style"><span class="menu-icon icon-user-slash"></span>Забаненные
+                пользователи</label>
+              <select id="tweak-banned-style" class="custom-select">
+                <option value="default">Стандартно (зачёркнутый)</option>
+                <option value="red-paint">Красный покрас + бейдж</option>
+                <option value="icon">Иконка бана у ника</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="avatar-border-select"><span class="menu-icon icon-avatar"></span>Обводка аватарок</label>
+              <select id="avatar-border-select" class="custom-select">
+                <option value="default">По умолчанию</option>
+                <option value="accent">Акцентная</option>
+                <option value="glow">Светящаяся</option>
+                <option value="paint-accent">Покрас (акцентная)</option>
+                <option value="paint-glow">Покрас (светящаяся)</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="loading-animation-select"><span class="menu-icon icon-loader"></span>Анимация загрузки</label>
+              <select id="loading-animation-select" class="custom-select">
+                <option value="none">Выкл</option>
+                <option value="fade">Плавное появление</option>
+                <option value="fade-up">Всплытие снизу</option>
+                <option value="fade-down">Опускание сверху</option>
+                <option value="slide-left">Свойство сдвига слева</option>
+                <option value="slide-right">Свойство сдвига справа</option>
+                <option value="zoom-in">Приближение</option>
+                <option value="zoom-out">Отдаление</option>
+                <option value="rotate-in">Появление с поворотом</option>
+                <option value="flip-x">3D Переворот (X)</option>
+                <option value="flip-y">3D Переворот (Y)</option>
+                <option value="bounce-up">Мягкий отскок</option>
+              </select>
+            </div>
+
+
+
+            <div class="control-row">
+              <label for="radius-slider"><span class="menu-icon icon-radius"></span>Скругление углов</label>
+              <div class="slider-wrapper">
+                <input type="range" id="radius-slider" min="0" max="20" value="8" step="1">
+                <span class="slider-val" id="radius-val">8px</span>
+              </div>
+            </div>
+
+            <div class="control-row" id="glass-opacity-row">
+              <label for="glass-opacity-slider"><span class="menu-icon icon-eye"></span>Непрозрачность элементов</label>
+              <div class="slider-wrapper">
+                <input type="range" id="glass-opacity-slider" min="10" max="100" value="100" step="5">
+                <span class="slider-val" id="glass-opacity-val">100%</span>
+              </div>
+            </div>
+
+            <div class="control-row" id="glass-blur-row" style="display: none;">
+              <label for="glass-blur-slider"><span class="menu-icon icon-radius"></span>Размытие стекла</label>
+              <div class="slider-wrapper">
+                <input type="range" id="glass-blur-slider" min="0" max="30" value="0" step="1">
+                <span class="slider-val" id="glass-blur-val">0px</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="control-group-title"><span class="menu-icon icon-image"></span>Логотип форума</div>
+          <div class="control-card">
+            <div class="control-row">
+              <label for="logo-type-select"><span class="menu-icon icon-settings"></span>Тип логотипа</label>
+              <select id="logo-type-select" class="custom-select">
+                <option value="default">По умолчанию</option>
+                <option value="accent-static">Статичный градиент</option>
+                <option value="accent-animated">Анимированный градиент</option>
+                <option value="custom">Своя картинка/GIF</option>
+              </select>
+            </div>
+
+            <div class="control-row" id="logo-url-row" style="display: none;">
+              <label for="logo-url-input"><span class="menu-icon icon-link"></span>Ссылка на логотип</label>
+              <input type="text" id="logo-url-input" class="custom-input"
+                placeholder="Вставьте прямую ссылку (https://...)">
+            </div>
+          </div>
+
+          <div class="control-group-title"><span class="menu-icon icon-palette"></span>Палитра цветов</div>
+          <div class="control-card colors-grid">
+            <div class="color-picker-item">
+              <label for="color-bg"><span class="menu-icon icon-bg"></span>Фон сайта</label>
+              <div class="picker-wrapper">
+                <input type="color" id="color-bg" value="#0f0f12">
+                <span class="hex-val" id="color-bg-hex">#0F0F12</span>
+              </div>
+            </div>
+
+            <div class="color-picker-item">
+              <label for="color-block"><span class="menu-icon icon-block"></span>Фон блоков</label>
+              <div class="picker-wrapper">
+                <input type="color" id="color-block" value="#18181f">
+                <span class="hex-val" id="color-block-hex">#18181F</span>
+              </div>
+            </div>
+
+            <div class="color-picker-item">
+              <label for="color-accent1"><span class="menu-icon icon-paint"></span>Акцент 1</label>
+              <div class="picker-wrapper">
+                <input type="color" id="color-accent1" value="#ff6b00">
+                <span class="hex-val" id="color-accent1-hex">#FF6B00</span>
+              </div>
+            </div>
+
+            <div class="color-picker-item">
+              <label for="color-accent2"><span class="menu-icon icon-fill"></span>Акцент 2</label>
+              <div class="picker-wrapper">
+                <input type="color" id="color-accent2" value="#e100ff">
+                <span class="hex-val" id="color-accent2-hex">#E100FF</span>
+              </div>
+            </div>
+
+            <div class="color-picker-item">
+              <label for="color-text"><span class="menu-icon icon-text"></span>Цвет текста</label>
+              <div class="picker-wrapper">
+                <input type="color" id="color-text" value="#e4e4eb">
+                <span class="hex-val" id="color-text-hex">#E4E4EB</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="control-group-title"><span class="menu-icon icon-paint"></span>Применение акцента к тексту</div>
+          <div class="control-card">
+            <div class="control-row">
+              <label for="tweak-accent-new-badge"><span class="menu-icon icon-settings"></span>Бейдж «Новое» у
+                тем</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-accent-new-badge" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="control-row">
+              <label for="tweak-accent-threads-meta"><span class="menu-icon icon-settings"></span>Информация о темах
+                (автор, дата)</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-accent-threads-meta" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="control-row">
+              <label for="tweak-accent-post-attribution"><span class="menu-icon icon-settings"></span>Шапка постов
+                (даты, номер, кнопки)</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-accent-post-attribution" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="control-row">
+              <label for="tweak-accent-buttons"><span class="menu-icon icon-settings"></span>Кнопки управления
+                (изменить, модерировать)</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-accent-buttons" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="control-row">
+              <label for="tweak-accent-thread-list"><span class="menu-icon icon-settings"></span>Список тем (заголовки,
+                страницы)</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-accent-thread-list" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="control-group-title"><span class="menu-icon icon-image"></span>Задний фон</div>
+          <div class="control-card background-settings-card">
+
+            <div class="control-row">
+              <label><span class="menu-icon icon-photo-video"></span>Тип фона</label>
+              <div class="segmented-control" id="bg-type-control">
+                <input type="radio" id="bg-type-color" name="bg-type" value="color" checked>
+                <label for="bg-type-color">Цвет</label>
+                <input type="radio" id="bg-type-image" name="bg-type" value="image">
+                <label for="bg-type-image">Картинка/GIF</label>
+                <input type="radio" id="bg-type-video" name="bg-type" value="video">
+                <label for="bg-type-video">Видео</label>
+              </div>
+            </div>
+
+            <div class="control-row bg-url-row" id="bg-url-row" style="display: none;">
+              <label for="bg-url-input"><span class="menu-icon icon-link"></span>Ссылка на фон</label>
+              <input type="text" id="bg-url-input" class="custom-input"
+                placeholder="Вставьте прямую ссылку (https://...)">
+            </div>
+
+            <div class="control-row bg-opacity-row" id="bg-opacity-row" style="display: none;">
+              <label for="bg-opacity-slider"><span class="menu-icon icon-eye"></span>Яркость фона</label>
+              <div class="slider-wrapper">
+                <input type="range" id="bg-opacity-slider" min="5" max="100" value="40" step="5">
+                <span class="slider-val" id="bg-opacity-val">40%</span>
+              </div>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-ambient-effect"><span class="menu-icon icon-palette"></span>Эффекты заднего фона</label>
+              <select id="tweak-ambient-effect" class="custom-select">
+                <option value="none">Выкл</option>
+                <option value="snow">Снегопад</option>
+                <option value="particles">Летающие частицы</option>
+                <option value="dust">Космический туман</option>
+                <option value="rain">Дождь</option>
+                <option value="matrix">Матрица</option>
+                <option value="stars">Звездное небо</option>
+                <option value="fireflies">Светлячки</option>
+              </select>
+            </div>
+
+            <div class="bg-templates-section" id="bg-templates-section" style="display: none;">
+              <label class="templates-label">Готовые шаблоны (кликните):</label>
+              <div class="bg-templates-grid">
+                <button type="button" class="bg-template-btn" data-type="image"
+                  data-url="https://i.pinimg.com/736x/db/4a/8d/db4a8df9ed9b8eeb613aedbf06878ff5.jpg">🌹 Martine
+                  Rose</button>
+                <button type="button" class="bg-template-btn" data-type="image"
+                  data-url="https://i.pinimg.com/736x/09/a8/4c/09a84c1b1564e05b08eafb08a57717e6.jpg">🌱
+                  Flatgrass</button>
+                <button type="button" class="bg-template-btn" data-type="image"
+                  data-url="https://i.pinimg.com/736x/d7/5f/d8/d75fd845f5b24dd443b6a714063d35e0.jpg">🟥 Тёмный принц
+                  Militantum</button>
+                <button type="button" class="bg-template-btn" data-type="video"
+                  data-url="https://cloud.onlysq.me/file/b8i0SS?mode=view">☕ Ночное кафе (Видео)</button>
+                <button type="button" class="bg-template-btn" data-type="image"
+                  data-url="https://cloud.onlysq.me/file/CMLSsNLj2n4Y?mode=view">🤖 ArizonaAI</button>
+                <button type="button" class="bg-template-btn" data-type="image"
+                  data-url="https://cloud.onlysq.me/file/SOT6R?mode=view">🌫️ Густой туман</button>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+        </div>
+      </section>
+
+      <section id="tweaks-tab" class="tab-panel">
+        <div class="customizer-scroll">
+
+          <div class="control-group-title"><span class="menu-icon icon-eye-slash"></span>Скрытие элементов</div>
+          <div class="control-card">
+
+            <div class="control-row">
+              <label for="tweak-hide-footer"><span class="menu-icon icon-eye-slash"></span>Скрыть футер</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-footer">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-sidebar"><span class="menu-icon icon-columns"></span>Скрыть боковое меню
+                (сайдбар)</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-sidebar">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-avatars"><span class="menu-icon icon-user-slash"></span>Скрыть аватарки
+                пользователей</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-avatars">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-your-posts"><span class="menu-icon icon-eye-slash"></span>Скрыть индикатор ваших
+                сообщений</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-your-posts">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-new-indicator"><span class="menu-icon icon-eye-slash"></span>Скрыть индикатор новых
+                тем</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-new-indicator">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-new-thread-indicator"><span class="menu-icon icon-eye-slash"></span>Скрыть
+                индикатор «Новое» у тем</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-new-thread-indicator">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-node-icons"><span class="menu-icon icon-eye-slash"></span>Скрыть иконки
+                разделов</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-node-icons">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-conversations"><span class="menu-icon icon-eye-slash"></span>Скрыть переписки в
+                навбаре</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-conversations">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-alerts"><span class="menu-icon icon-eye-slash"></span>Скрыть уведомления в
+                навбаре</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-alerts">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-subforums"><span class="menu-icon icon-eye-slash"></span>Скрыть кнопку
+                подфорумов</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-subforums">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-prefixes"><span class="menu-icon icon-eye-slash"></span>Скрыть префиксы у
+                тем</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-prefixes">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-signatures"><span class="menu-icon icon-eye-slash"></span>Скрыть подписи
+                пользователей</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-signatures">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-style-variation"><span class="menu-icon icon-eye-slash"></span>Скрыть переключатель
+                темы (Светлая/Тёмная) форума</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-style-variation">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-breadcrumbs"><span class="menu-icon icon-eye-slash"></span>Скрыть хлебные
+                крошки</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-breadcrumbs">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-section-links"><span class="menu-icon icon-eye-slash"></span>Скрыть навигацию в
+                сайдбаре</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-section-links">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-user-extras"><span class="menu-icon icon-eye-slash"></span>Скрыть доп. информацию
+                об авторе</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-user-extras">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="remove-user-paints"><span class="menu-icon icon-user-slash"></span>Убрать покрас ников</label>
+              <label class="switch">
+                <input type="checkbox" id="remove-user-paints">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="hide-user-banners"><span class="menu-icon icon-eye-slash"></span>Скрыть бейджи
+                должностей</label>
+              <label class="switch">
+                <input type="checkbox" id="hide-user-banners">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-post-bg"><span class="menu-icon icon-eye-slash"></span>Отключить задний фон у
+                постов</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-post-bg">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-ecosystem-badges"><span class="menu-icon icon-eye-slash"></span>Скрыть иконки
+                экосистемы ArizonaAI</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-ecosystem-badges">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="info-box">
+              <p>При использовании расширений экосистемы ArizonaAI (Arizona Forum Styler, Arizona LogsParser Helper и
+                т.д.) уникальные бейджи и группа пользователя будут автоматически добавляться к вашему никнейму на
+                форуме и других местах!</p>
+              <p>Чтобы расширения могли распознать и привязать ваш аккаунт на arizona-ai.ru | arizona-ai.tech:</p>
+              <p>- Никнейм на сайте должен быть в игровом формате (например, Nick_Name, Nick Name, nick_name и т.д.);
+              </p>
+              <p>- Профиль пользователя должен быть публичным в настройках аккаунта.</p>
+            </div>
+
+          </div>
+
+          <div class="control-group-title"><span class="menu-icon icon-user"></span>Анимированные аватары</div>
+          <div class="control-card">
+            <div class="control-row">
+              <label for="tweak-animated-avatars"><span class="menu-icon icon-user"></span>Включить анимированные
+                аватары</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-animated-avatars">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="info-box">
+              <p><strong>Как это работает?</strong></p>
+              <p>Сам форум поддерживает установку анимированных аватарок (в формате <strong>.gif</strong>), но при
+                загрузке конвертирует их в статический <strong>.jpg</strong>, отключая анимацию.</p>
+              <p>Наше расширение находит такие изображения и восстанавливает их исходную анимацию. Это работает
+                <strong>не только для вас</strong>, но и позволяет видеть анимацию <strong>всех остальных
+                  пользователей</strong> форума, которые загрузили анимированную аватарку!
+              </p>
+            </div>
+          </div>
+
+          <div class="control-group-title"><span class="menu-icon icon-settings"></span>Твики интерфейса</div>
+          <div class="control-card">
+
+
+
+            <div class="control-row">
+              <label for="tweak-nav-search"><span class="menu-icon icon-search"></span>Кнопка поиска в навбаре</label>
+              <select id="tweak-nav-search" class="custom-select">
+                <option value="default">По умолчанию</option>
+                <option value="icon-only">Только иконка</option>
+                <option value="hide">Скрыть полностью</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-node-icon-status"><span class="menu-icon icon-settings"></span>Иконки разделов
+                (новые/старые)</label>
+              <select id="tweak-node-icon-status" class="custom-select">
+                <option value="default">По умолчанию</option>
+                <option value="unread">Все как новые</option>
+                <option value="read">Все как прочитанные</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-copy-selected-link"><span class="menu-icon icon-link"></span>Ссылка на выделенный
+                текст</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-copy-selected-link">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+
+
+
+
+            <div class="control-row">
+              <label for="tweak-cursor"><span class="menu-icon icon-cursor"></span>Кастомный курсор</label>
+              <select id="tweak-cursor" class="custom-select">
+                <option value="default">Выкл</option>
+                <option value="crosshair">Прицел (Crosshair)</option>
+                <option value="gta">Круглый прицел</option>
+                <option value="dot">Точка (Dot)</option>
+                <option value="arrow">Стильная стрелка (Sleek Arrow)</option>
+                <option value="diamond">Ромб (Diamond)</option>
+                <option value="ring">Кольцо (Ring)</option>
+              </select>
+            </div>
+
+            <div class="control-row" id="tweak-cursor-thickness-row" style="display: none;">
+              <label for="tweak-cursor-thickness"
+                style="padding-left: 20px; font-size: 12px; color: var(--pop-text-secondary);"><span
+                  class="menu-icon icon-radius" style="transform: scale(0.85);"></span>Толщина курсора</label>
+              <div class="slider-wrapper">
+                <input type="range" id="tweak-cursor-thickness" min="1" max="5" value="2" step="0.5">
+                <span class="slider-val" id="tweak-cursor-thickness-val">2px</span>
+              </div>
+            </div>
+
+            <div class="control-row" id="tweak-cursor-color-theme-row" style="display: none;">
+              <label for="tweak-cursor-color-theme"
+                style="padding-left: 20px; font-size: 12px; color: var(--pop-text-secondary);"><span
+                  class="menu-icon icon-paint" style="transform: scale(0.85);"></span>Цвет из темы</label>
+              <div class="toggle-wrapper">
+                <label class="switch">
+                  <input type="checkbox" id="tweak-cursor-color-theme" checked>
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="control-row" id="tweak-cursor-color-row" style="display: none;">
+              <label for="tweak-cursor-color"
+                style="padding-left: 20px; font-size: 12px; color: var(--pop-text-secondary);"><span
+                  class="menu-icon icon-fill" style="transform: scale(0.85);"></span>Свой цвет курсора</label>
+              <div class="picker-wrapper" style="width: 110px;">
+                <input type="color" id="tweak-cursor-color" value="#ff6b00">
+                <span class="hex-val" id="tweak-cursor-color-hex" style="font-size: 11px;">#FF6B00</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="control-group-title"><span class="menu-icon icon-columns"></span>Настройка навбара</div>
+          <div class="control-card">
+            <div style="font-size: 12px; font-weight: 600; color: var(--pop-text-secondary); margin-bottom: 8px;">Скрыть
+              кнопки в навбаре:</div>
+            <div class="nav-toggle-grid" id="nav-toggle-grid"
+              style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 12px; margin-bottom: 12px;">
+            </div>
+
+            <div style="border-top: 1px dashed var(--pop-border); padding-top: 10px; margin-top: 6px;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--pop-text-secondary); margin-bottom: 8px;">
+                Кастомные кнопки:</div>
+              <div id="custom-nav-list" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;">
+              </div>
+              <div class="add-nav-form" style="display: flex; flex-direction: column; gap: 6px;">
+                <div style="display: flex; gap: 6px;">
+                  <input type="text" id="new-nav-name" placeholder="Название..." class="custom-input" style="flex: 2;">
+                  <input type="text" id="new-nav-url" placeholder="Ссылка (https://...)" class="custom-input"
+                    style="flex: 3;">
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+                  <label
+                    style="display: flex; align-items: center; gap: 6px; font-size: 10px; cursor: pointer; color: var(--pop-text-secondary);">
+                    <input type="checkbox" id="new-nav-tab"
+                      style="accent-color: var(--pop-accent); width: 13px; height: 13px;"> В новой вкладке
+                  </label>
+                  <button id="add-nav-btn" class="btn"
+                    style="width: auto; padding: 6px 12px; font-size: 11px;">Добавить</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section id="share-tab" class="tab-panel">
+        <div class="customizer-scroll">
+          <a href="https://discord.gg/5DbTZzQMWH" target="_blank" class="btn btn-primary"
+            style="margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%); border: none;">
+            <span class="menu-icon icon-discord-solid"
+              style="-webkit-mask-image: url('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/svgs/brands/discord.svg'); mask-image: url('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/svgs/brands/discord.svg'); background-color: currentColor; display: inline-block; width: 14px; height: 14px; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center; mask-position: center;"></span>
+            Предложить свою тему сообществу
+          </a>
+          <div class="control-group-title"><span class="menu-icon icon-save"></span>Сохранить как свою тему</div>
+          <div class="control-card save-theme-card">
+            <input type="text" id="custom-theme-name" placeholder="Введите название темы..." maxlength="20"
+              class="custom-input">
+            <button id="save-theme-btn" class="btn btn-primary">Сохранить тему</button>
+          </div>
+
+          <div class="control-group-title"><span class="menu-icon icon-import"></span>Импортировать тему</div>
+          <div class="control-card import-theme-card">
+            <input type="text" id="import-theme-code" placeholder="Вставьте код темы (base64)..." class="custom-input">
+            <button id="import-theme-btn" class="btn btn-primary">Импортировать тему</button>
+          </div>
+
+          <div class="control-group-title"><span class="menu-icon icon-save"></span>Экспорт текущей темы</div>
+          <div class="control-card export-theme-card-block" style="display: flex; flex-direction: column; gap: 8px;">
+            <p style="font-size: 11px; color: var(--pop-text-secondary); line-height: 1.4;">
+              Вы можете экспортировать текущую тему со всеми её цветами, скруглениями, прозрачностью и активными
+              твиками.
+            </p>
+            <button id="export-active-theme-btn" class="btn btn-primary">Скопировать код текущей темы</button>
+          </div>
+
+          <div id="saved-themes-section" class="saved-themes-section" style="display: none;">
+            <div class="control-group-title"><span class="menu-icon icon-folder"></span>Мои сохраненные темы</div>
+            <div class="saved-themes-list" id="saved-themes-list">
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="app-footer">
+      <div class="active-theme-wrapper">
+        <span class="active-theme-label">Активная тема:</span>
+        <span class="active-theme-name" id="active-theme-name">Arizona Sunset</span>
+      </div>
+      <div class="active-theme-wrapper">
+        <span class="active-theme-name">Arizona AI | Ecosystem</span>
+      </div>
+      <div class="footer-links" style="display: flex; align-items: center; gap: 8px;">
+        <span class="app-version"
+          style="font-size: 10px; color: var(--pop-text-secondary); opacity: 0.6; font-weight: 500; margin-right: 4px;">v1.9.1</span>
+        <a href="https://chromewebstore.google.com/detail/gaipajaibkdghopbaflgfjfhfjjgihdg?utm_source=item-share-cb"
+          target="_blank" class="footer-link-btn" title="Страница расширения в Chrome Web Store">
+          <span class="footer-icon icon-chrome"></span>
+        </a>
+        <a href="https://www.blast.hk/threads/254740/" target="_blank" class="footer-link-btn"
+          title="BlastHack тема расширения">
+          <img src="icons/logo_blasthack.png" alt="BlastHack" class="footer-logo-img">
+        </a>
+        <a href="https://discord.gg/5DbTZzQMWH" target="_blank" class="footer-link-btn"
+          title="Discord сервер расширения">
+          <span class="footer-icon icon-discord"></span>
+        </a>
+        <a href="https://t.me/arizona_ai_ru?direct" target="_blank" class="footer-link-btn"
+          title="Telegram обращения (Предложить улучшение/Сообщить о баге)">
+          <span class="footer-icon icon-telegram"></span>
+        </a>
+        <a href="https://arizona-ai.ru/" target="_blank" class="footer-link-btn" title="ArizonaAI">
+          <img src="icons/logo_bw_arz_ai.png" alt="ArizonaAI" class="footer-logo-img">
+        </a>
+      </div>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+
+</html>
