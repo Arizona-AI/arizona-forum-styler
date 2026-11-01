@@ -42,7 +42,7 @@
 
       <section id="presets-tab" class="tab-panel active">
         <div class="presets-container">
-          <a href="https://discord.gg/5DbTZzQMWH" target="_blank" class="btn btn-primary"
+          <a href="https://discord.gg/5DbTZzQMWH" target="_blank" class="btn btn-primary btn-community"
             style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%); border: none;">
             <span class="menu-icon icon-discord-solid"
               style="-webkit-mask-image: url('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/svgs/brands/discord.svg'); mask-image: url('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/svgs/brands/discord.svg'); background-color: currentColor; display: inline-block; width: 14px; height: 14px; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center; mask-position: center;"></span>
@@ -225,6 +225,27 @@
             </div>
           </div>
 
+          <div class="control-group-title"><span class="menu-icon icon-columns"></span>Внешний вид</div>
+          <div class="control-card">
+            <div class="control-row">
+              <label for="tweak-node-columns"><span class="menu-icon icon-columns"></span>Разделов в строке</label>
+              <select id="tweak-node-columns" class="custom-select">
+                <option value="1">Один (список)</option>
+                <option value="2">Два</option>
+                <option value="3">Три</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-thread-columns"><span class="menu-icon icon-settings"></span>Тем в строке</label>
+              <select id="tweak-thread-columns" class="custom-select">
+                <option value="1">Одна (список)</option>
+                <option value="2">Две</option>
+                <option value="3">Три</option>
+              </select>
+            </div>
+          </div>
+
           <div class="control-group-title"><span class="menu-icon icon-image"></span>Логотип форума</div>
           <div class="control-card">
             <div class="control-row">
@@ -241,6 +262,50 @@
               <label for="logo-url-input"><span class="menu-icon icon-link"></span>Ссылка на логотип</label>
               <input type="text" id="logo-url-input" class="custom-input"
                 placeholder="Вставьте прямую ссылку (https://...)">
+            </div>
+
+            <div class="control-row" id="logo-size-row">
+              <label for="logo-size-slider"><span class="menu-icon icon-settings"></span>Размер</label>
+              <div class="slider-wrapper">
+                <input type="range" id="logo-size-slider" min="50" max="200" step="5" value="100">
+                <span class="slider-val" id="logo-size-val">100%</span>
+              </div>
+            </div>
+
+            <div class="control-row" id="logo-opacity-row">
+              <label for="logo-opacity-slider"><span class="menu-icon icon-settings"></span>Непрозрачность</label>
+              <div class="slider-wrapper">
+                <input type="range" id="logo-opacity-slider" min="10" max="100" step="5" value="100">
+                <span class="slider-val" id="logo-opacity-val">100%</span>
+              </div>
+            </div>
+
+            <div class="control-row" id="logo-gradient-angle-row">
+              <label for="logo-gradient-angle-slider"><span class="menu-icon icon-settings"></span>Наклон градиента</label>
+              <div class="slider-wrapper">
+                <input type="range" id="logo-gradient-angle-slider" min="0" max="360" step="15" value="135">
+                <span class="slider-val" id="logo-gradient-angle-val">135°</span>
+              </div>
+            </div>
+
+            <div class="control-row" id="logo-gradient-duration-row" style="display: none;">
+              <label for="logo-gradient-duration-slider"><span class="menu-icon icon-settings"></span>Цикл градиента</label>
+              <div class="slider-wrapper">
+                <input type="range" id="logo-gradient-duration-slider" min="0.5" max="10" step="0.5" value="3">
+                <span class="slider-val" id="logo-gradient-duration-val">3 с</span>
+              </div>
+            </div>
+
+            <div class="control-row">
+              <label for="logo-hover-select"><span class="menu-icon icon-magic"></span>При наведении</label>
+              <select id="logo-hover-select" class="custom-select">
+                <option value="none">Без эффекта</option>
+                <option value="scale">Увеличение</option>
+                <option value="glow">Свечение</option>
+                <option value="scale-glow">Увеличение и свечение</option>
+                <option value="tilt">Наклон</option>
+                <option value="lift">Приподнять</option>
+              </select>
             </div>
           </div>
 
@@ -265,16 +330,16 @@
             <div class="color-picker-item">
               <label for="color-accent1"><span class="menu-icon icon-paint"></span>Акцент 1</label>
               <div class="picker-wrapper">
-                <input type="color" id="color-accent1" value="#ff6b00">
-                <span class="hex-val" id="color-accent1-hex">#FF6B00</span>
+                <input type="color" id="color-accent1" value="#e2e8f0">
+                <span class="hex-val" id="color-accent1-hex">#E2E8F0</span>
               </div>
             </div>
 
             <div class="color-picker-item">
               <label for="color-accent2"><span class="menu-icon icon-fill"></span>Акцент 2</label>
               <div class="picker-wrapper">
-                <input type="color" id="color-accent2" value="#e100ff">
-                <span class="hex-val" id="color-accent2-hex">#E100FF</span>
+                <input type="color" id="color-accent2" value="#3b82f6">
+                <span class="hex-val" id="color-accent2-hex">#3B82F6</span>
               </div>
             </div>
 
@@ -289,6 +354,20 @@
 
           <div class="control-group-title"><span class="menu-icon icon-paint"></span>Применение акцента к тексту</div>
           <div class="control-card">
+            <div class="control-row">
+              <label for="style-thread-prefixes"><span class="menu-icon icon-paint"></span>Оформлять префиксы тем</label>
+              <label class="switch">
+                <input type="checkbox" id="style-thread-prefixes" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="control-row">
+              <label for="default-username-color"><span class="menu-icon icon-user"></span>Обычные никнеймы и обводка аватара</label>
+              <select id="default-username-color" class="custom-select">
+                <option value="accent">Акцентный цвет</option>
+                <option value="gray">Серый</option>
+              </select>
+            </div>
             <div class="control-row">
               <label for="tweak-accent-new-badge"><span class="menu-icon icon-settings"></span>Бейдж «Новое» у
                 тем</label>
@@ -360,6 +439,14 @@
               </div>
             </div>
 
+            <div class="control-row" id="bg-hue-row" style="display: none;">
+              <label for="bg-hue-slider"><span class="menu-icon icon-palette"></span>Оттенок изображения</label>
+              <div class="slider-wrapper">
+                <input type="range" id="bg-hue-slider" min="-180" max="180" value="0" step="1">
+                <span class="slider-val" id="bg-hue-val">0°</span>
+              </div>
+            </div>
+
             <div class="control-row">
               <label for="tweak-ambient-effect"><span class="menu-icon icon-palette"></span>Эффекты заднего фона</label>
               <select id="tweak-ambient-effect" class="custom-select">
@@ -374,26 +461,63 @@
               </select>
             </div>
 
-            <div class="bg-templates-section" id="bg-templates-section" style="display: none;">
+            <div id="ambient-settings" style="display: none;">
+              <div class="control-row">
+                <label for="ambient-intensity">Интенсивность</label>
+                <div class="slider-wrapper">
+                  <input type="range" id="ambient-intensity" min="0" max="100" step="5" value="40">
+                  <span class="slider-val" id="ambient-intensity-val">40%</span>
+                </div>
+              </div>
+              <div class="control-row">
+                <label for="ambient-speed">Скорость</label>
+                <div class="slider-wrapper">
+                  <input type="range" id="ambient-speed" min="25" max="300" step="5" value="100">
+                  <span class="slider-val" id="ambient-speed-val">100%</span>
+                </div>
+              </div>
+              <div class="control-row">
+                <label for="ambient-amount">Количество частиц</label>
+                <div class="slider-wrapper">
+                  <input type="range" id="ambient-amount" min="25" max="300" step="5" value="100">
+                  <span class="slider-val" id="ambient-amount-val">100%</span>
+                </div>
+              </div>
+              <div class="control-row">
+                <label for="ambient-size">Размер частиц</label>
+                <div class="slider-wrapper">
+                  <input type="range" id="ambient-size" min="50" max="200" step="5" value="100">
+                  <span class="slider-val" id="ambient-size-val">100%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-templates-section" id="bg-templates-section">
               <label class="templates-label">Готовые шаблоны (кликните):</label>
               <div class="bg-templates-grid">
                 <button type="button" class="bg-template-btn" data-type="image"
-                  data-url="https://i.pinimg.com/736x/db/4a/8d/db4a8df9ed9b8eeb613aedbf06878ff5.jpg">🌹 Martine
-                  Rose</button>
+                  data-template-path="/static/img/extensions_backgrounds/abstract_blue.png">Abstract Blue</button>
                 <button type="button" class="bg-template-btn" data-type="image"
-                  data-url="https://i.pinimg.com/736x/09/a8/4c/09a84c1b1564e05b08eafb08a57717e6.jpg">🌱
-                  Flatgrass</button>
+                  data-template-path="/static/img/extensions_backgrounds/abstract_blue_orange.png">Abstract Blue Orange</button>
                 <button type="button" class="bg-template-btn" data-type="image"
-                  data-url="https://i.pinimg.com/736x/d7/5f/d8/d75fd845f5b24dd443b6a714063d35e0.jpg">🟥 Тёмный принц
-                  Militantum</button>
-                <button type="button" class="bg-template-btn" data-type="video"
-                  data-url="https://cloud.onlysq.me/file/b8i0SS?mode=view">☕ Ночное кафе (Видео)</button>
+                  data-template-path="/static/img/extensions_backgrounds/abstract_orange.png">Abstract Orange</button>
                 <button type="button" class="bg-template-btn" data-type="image"
-                  data-url="https://cloud.onlysq.me/file/CMLSsNLj2n4Y?mode=view">🤖 ArizonaAI</button>
+                  data-template-path="/static/img/extensions_backgrounds/arizona_ai_ecosystem.png">Arizona AI Ecosystem</button>
                 <button type="button" class="bg-template-btn" data-type="image"
-                  data-url="https://cloud.onlysq.me/file/SOT6R?mode=view">🌫️ Густой туман</button>
+                  data-template-path="/static/img/extensions_backgrounds/arizona_ai_logo_1.png">Arizona AI 1</button>
+                <button type="button" class="bg-template-btn" data-type="image"
+                  data-template-path="/static/img/extensions_backgrounds/arizona_ai_logo_2.png">Arizona AI 2</button>
+                <button type="button" class="bg-template-btn" data-type="image"
+                  data-template-path="/static/img/extensions_backgrounds/arizona_ai_logo_3.png">Arizona AI 3</button>
+                <button type="button" class="bg-template-btn" data-type="image"
+                  data-template-path="/static/img/extensions_backgrounds/dark_stripes.png">Dark Stripes</button>
+                <button type="button" class="bg-template-btn" data-type="image"
+                  data-template-path="/static/img/extensions_backgrounds/foggy_field.png">Foggy Field</button>
+                <button type="button" class="bg-template-btn" data-type="image"
+                  data-template-path="/static/img/extensions_backgrounds/dramatic_sky.png">Dramatic Sky</button>
               </div>
             </div>
+
           </div>
 
 
@@ -406,8 +530,16 @@
       <section id="tweaks-tab" class="tab-panel">
         <div class="customizer-scroll">
 
-          <div class="control-group-title"><span class="menu-icon icon-eye-slash"></span>Скрытие элементов</div>
+          <div class="control-group-title"><span class="menu-icon icon-eye-slash"></span>Полезные настройки скрытия</div>
           <div class="control-card">
+
+            <div class="control-row">
+              <label for="tweak-hide-side-nav-border"><span class="menu-icon icon-eye-slash"></span>Убрать правую линию боковой панели</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-side-nav-border">
+                <span class="slider round"></span>
+              </label>
+            </div>
 
             <div class="control-row">
               <label for="tweak-hide-footer"><span class="menu-icon icon-eye-slash"></span>Скрыть футер</label>
@@ -416,6 +548,68 @@
                 <span class="slider round"></span>
               </label>
             </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-mobile-engine-banner"><span class="menu-icon icon-eye-slash"></span>Скрыть баннер «Новый мобильный движок»</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-mobile-engine-banner">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-seasonal-style"><span class="menu-icon icon-eye-slash"></span>Скрыть переключатель
+                хэллоуинской темы</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-seasonal-style">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-style-variation"><span class="menu-icon icon-eye-slash"></span>Скрыть переключатель
+                темы (Светлая/Тёмная) форума</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-style-variation">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-hide-post-bg"><span class="menu-icon icon-eye-slash"></span>Отключить задний фон у
+                постов</label>
+              <label class="switch">
+                <input type="checkbox" id="tweak-hide-post-bg">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+          </div>
+
+          <div class="control-group-title"><span class="menu-icon icon-user"></span>Активность в теме</div>
+          <div class="control-card">
+            <div class="control-row">
+              <label for="tweak-thread-viewers">Пользователи просматривающие тему в данный момент</label>
+              <select id="tweak-thread-viewers" class="custom-select">
+                <option value="show">Показывать</option>
+                <option value="collapse">Сворачивать</option>
+                <option value="hide">Скрывать</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="tweak-thread-readers">Кто прочёл эту тему</label>
+              <select id="tweak-thread-readers" class="custom-select">
+                <option value="show">Показывать</option>
+                <option value="collapse">Сворачивать</option>
+                <option value="hide">Скрывать</option>
+              </select>
+            </div>
+
+          </div>
+
+          <div class="control-group-title"><span class="menu-icon icon-eye-slash"></span>Скрытие элементов</div>
+          <div class="control-card">
 
             <div class="control-row">
               <label for="tweak-hide-sidebar"><span class="menu-icon icon-columns"></span>Скрыть боковое меню
@@ -445,8 +639,7 @@
             </div>
 
             <div class="control-row">
-              <label for="tweak-hide-new-indicator"><span class="menu-icon icon-eye-slash"></span>Скрыть индикатор новых
-                тем</label>
+              <label for="tweak-hide-new-indicator"><span class="menu-icon icon-eye-slash"></span>Скрыть индикатор «Новое» у разделов</label>
               <label class="switch">
                 <input type="checkbox" id="tweak-hide-new-indicator">
                 <span class="slider round"></span>
@@ -517,15 +710,6 @@
             </div>
 
             <div class="control-row">
-              <label for="tweak-hide-style-variation"><span class="menu-icon icon-eye-slash"></span>Скрыть переключатель
-                темы (Светлая/Тёмная) форума</label>
-              <label class="switch">
-                <input type="checkbox" id="tweak-hide-style-variation">
-                <span class="slider round"></span>
-              </label>
-            </div>
-
-            <div class="control-row">
               <label for="tweak-hide-breadcrumbs"><span class="menu-icon icon-eye-slash"></span>Скрыть хлебные
                 крошки</label>
               <label class="switch">
@@ -565,15 +749,6 @@
                 должностей</label>
               <label class="switch">
                 <input type="checkbox" id="hide-user-banners">
-                <span class="slider round"></span>
-              </label>
-            </div>
-
-            <div class="control-row">
-              <label for="tweak-hide-post-bg"><span class="menu-icon icon-eye-slash"></span>Отключить задний фон у
-                постов</label>
-              <label class="switch">
-                <input type="checkbox" id="tweak-hide-post-bg">
                 <span class="slider round"></span>
               </label>
             </div>
@@ -740,7 +915,7 @@
 
       <section id="share-tab" class="tab-panel">
         <div class="customizer-scroll">
-          <a href="https://discord.gg/5DbTZzQMWH" target="_blank" class="btn btn-primary"
+          <a href="https://discord.gg/5DbTZzQMWH" target="_blank" class="btn btn-primary btn-community"
             style="margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%); border: none;">
             <span class="menu-icon icon-discord-solid"
               style="-webkit-mask-image: url('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/svgs/brands/discord.svg'); mask-image: url('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/svgs/brands/discord.svg'); background-color: currentColor; display: inline-block; width: 14px; height: 14px; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center; mask-position: center;"></span>
@@ -784,12 +959,9 @@
         <span class="active-theme-label">Активная тема:</span>
         <span class="active-theme-name" id="active-theme-name">Arizona Sunset</span>
       </div>
-      <div class="active-theme-wrapper">
-        <span class="active-theme-name">Arizona AI | Ecosystem</span>
-      </div>
       <div class="footer-links" style="display: flex; align-items: center; gap: 8px;">
         <span class="app-version"
-          style="font-size: 10px; color: var(--pop-text-secondary); opacity: 0.6; font-weight: 500; margin-right: 4px;">v1.9.1</span>
+          style="font-size: 10px; color: var(--pop-text-secondary); opacity: 0.6; font-weight: 500; margin-right: 4px;">v1.10</span>
         <a href="https://chromewebstore.google.com/detail/gaipajaibkdghopbaflgfjfhfjjgihdg?utm_source=item-share-cb"
           target="_blank" class="footer-link-btn" title="Страница расширения в Chrome Web Store">
           <span class="footer-icon icon-chrome"></span>

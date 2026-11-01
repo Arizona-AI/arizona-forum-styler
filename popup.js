@@ -1,5 +1,360 @@
 
 const PRESETS = {
+  obsidian_silver: {
+    "id": "obsidian_silver",
+    "mode": "dark",
+    "font": "'Inter', sans-serif",
+    "fontApply": "exclude-messages",
+    "fontWeight": "default",
+    "fontSize": "default",
+    "avatarStyle": "paint-accent",
+    "removeUserPaints": false,
+    "hideUserBanners": false,
+    "radius": 6,
+    "glassOpacity": 100,
+    "glassBlur": 0,
+    "bgType": "color",
+    "bgUrl": "",
+    "bgOpacity": 40,
+    "bgHue": 0,
+    "loadingAnimation": "fade",
+    "logoType": "accent-animated",
+    "logoUrl": "",
+    "logoSize": 100,
+    "logoOpacity": 100,
+    "logoGradientAngle": 135,
+    "logoGradientDuration": 3,
+    "logoHover": "scale-glow",
+    "styleThreadPrefixes": true,
+    "defaultUsernameColor": "gray",
+    "accentThreadsMeta": true,
+    "accentPostAttribution": true,
+    "accentButtons": true,
+    "accentThreadList": true,
+    "accentNewBadge": true,
+    "bannedUserStyle": "default",
+    "accent1": "#ffffff",
+    "accent2": "#b0bec5",
+    "bg": "#000000",
+    "block": "#121212",
+    "name": "Obsidian Silver (Новое)",
+    "text": "#ffffff",
+    "tweaks": {
+      "threadViewers": "collapse",
+      "threadReaders": "collapse",
+      "hideFooter": true,
+      "hideMobileEngineBanner": true,
+      "hideSideNavBorder": true,
+      "hideSidebar": false,
+      "hideAvatars": false,
+      "hideYourPosts": false,
+      "hideNewIndicator": true,
+      "hideNewThreadIndicator": true,
+      "hideNodeIcons": false,
+      "hideConversations": false,
+      "hideAlerts": false,
+      "hideSubforums": false,
+      "hidePrefixes": false,
+      "hideSignatures": false,
+      "hideStyleVariation": true,
+      "hideSeasonalStyle": true,
+      "hideBreadcrumbs": false,
+      "hideSectionLinks": false,
+      "hideUserExtras": false,
+      "animatedAvatars": true,
+      "navSearch": "icon-only",
+      "nodeIconStatus": "read",
+      "threadColumns": "1",
+      "nodeColumns": "2",
+      "pageTransition": "none",
+      "ambientEffect": "none",
+      "ambientIntensity": 40,
+      "ambientSpeed": 100,
+      "ambientAmount": 100,
+      "ambientSize": 100,
+      "cursor": "default",
+      "cursorThickness": 2,
+      "cursorColorUseTheme": true,
+      "cursorColor": "#ff6b00",
+      "hidePostBg": false,
+      "hideEcosystemBadges": false,
+      "copySelectedTextLink": false,
+      "hiddenNavIds": [
+        "arzServer",
+        "arzCoop",
+        "arzDiscord",
+        "home",
+        "arzHelp"
+      ],
+      "customNavItems": []
+    }
+  },
+  material_green_dark: {
+    "id": "material_green_dark",
+    "mode": "dark",
+    "fontApply": "exclude-messages",
+    "fontWeight": "default",
+    "fontSize": "default",
+    "avatarStyle": "paint-glow",
+    "removeUserPaints": false,
+    "hideUserBanners": false,
+    "bgType": "image",
+    "logoType": "accent-animated",
+    "logoUrl": "",
+    "logoSize": 100,
+    "logoOpacity": 100,
+    "logoGradientAngle": 135,
+    "logoGradientDuration": 3,
+    "logoHover": "scale-glow",
+    "styleThreadPrefixes": true,
+    "defaultUsernameColor": "gray",
+    "accentThreadsMeta": true,
+    "accentPostAttribution": true,
+    "accentButtons": true,
+    "accentThreadList": true,
+    "accentNewBadge": true,
+    "bannedUserStyle": "default",
+    "name": "Moss Valley (Новое)",
+    "font": "'Nunito', sans-serif",
+    "radius": 12,
+    "glassOpacity": 100,
+    "glassBlur": 0,
+    "bgUrl": "https://arizona-ai.ru/static/img/extensions_backgrounds/foggy_field.png",
+    "bgOpacity": 30,
+    "bgHue": 63,
+    "loadingAnimation": "bounce-up",
+    "accent1": "#96e481",
+    "accent2": "#99e6bb",
+    "bg": "#111410",
+    "block": "#1e261c",
+    "text": "#ecefeb",
+    "tweaks": {
+      "threadViewers": "collapse",
+      "threadReaders": "collapse",
+      "hideFooter": true,
+      "hideMobileEngineBanner": true,
+      "hideSideNavBorder": true,
+      "hideSidebar": false,
+      "hideAvatars": false,
+      "hideYourPosts": true,
+      "hideNewIndicator": true,
+      "hideNewThreadIndicator": true,
+      "hideNodeIcons": false,
+      "hideConversations": false,
+      "hideAlerts": false,
+      "hideSubforums": false,
+      "hidePrefixes": false,
+      "hideSignatures": false,
+      "hideStyleVariation": true,
+      "hideSeasonalStyle": true,
+      "hideBreadcrumbs": false,
+      "hideSectionLinks": false,
+      "hideUserExtras": false,
+      "animatedAvatars": true,
+      "navSearch": "icon-only",
+      "nodeIconStatus": "read",
+      "threadColumns": "1",
+      "nodeColumns": "3",
+      "pageTransition": "none",
+      "ambientEffect": "none",
+      "ambientIntensity": 40,
+      "ambientSpeed": 100,
+      "ambientAmount": 100,
+      "ambientSize": 100,
+      "cursor": "default",
+      "cursorThickness": 2,
+      "cursorColorUseTheme": true,
+      "cursorColor": "#ff6b00",
+      "hidePostBg": false,
+      "hideEcosystemBadges": false,
+      "copySelectedTextLink": true,
+      "customNavItems": [],
+      "hiddenNavIds": [
+        "arzServer",
+        "arzAmnesty",
+        "arzDiscord",
+        "arzCoop",
+        "home"
+      ]
+    }
+  },
+  test_2: {
+    "id": "test_2",
+    "mode": "dark",
+    "fontApply": "exclude-messages",
+    "fontWeight": "default",
+    "fontSize": "default",
+    "avatarStyle": "paint-glow",
+    "removeUserPaints": false,
+    "hideUserBanners": false,
+    "bgType": "image",
+    "logoType": "accent-animated",
+    "logoUrl": "",
+    "logoSize": 100,
+    "logoOpacity": 100,
+    "logoGradientAngle": 135,
+    "logoGradientDuration": 3,
+    "logoHover": "scale-glow",
+    "styleThreadPrefixes": true,
+    "defaultUsernameColor": "gray",
+    "accentThreadsMeta": true,
+    "accentPostAttribution": true,
+    "accentButtons": true,
+    "accentThreadList": true,
+    "accentNewBadge": true,
+    "bannedUserStyle": "default",
+    "name": "Nordic Sky (Новое)",
+    "font": "'Inter', sans-serif",
+    "radius": 0,
+    "glassOpacity": 60,
+    "glassBlur": 0,
+    "bgUrl": "https://arizona-ai.ru/static/img/extensions_backgrounds/dramatic_sky.png",
+    "bgOpacity": 10,
+    "bgHue": 0,
+    "loadingAnimation": "fade-up",
+    "accent1": "#88c0d0",
+    "accent2": "#81a1c1",
+    "bg": "#1e222b",
+    "block": "#252a36",
+    "text": "#d8dee9",
+    "tweaks": {
+      "threadViewers": "collapse",
+      "threadReaders": "collapse",
+      "hideFooter": true,
+      "hideMobileEngineBanner": true,
+      "hideSideNavBorder": false,
+      "hideSidebar": false,
+      "hideAvatars": false,
+      "hideYourPosts": false,
+      "hideNewIndicator": true,
+      "hideNewThreadIndicator": false,
+      "hideNodeIcons": false,
+      "hideConversations": false,
+      "hideAlerts": false,
+      "hideSubforums": false,
+      "hidePrefixes": false,
+      "hideSignatures": false,
+      "hideStyleVariation": true,
+      "hideSeasonalStyle": true,
+      "hideBreadcrumbs": false,
+      "hideSectionLinks": true,
+      "hideUserExtras": false,
+      "animatedAvatars": true,
+      "navSearch": "icon-only",
+      "nodeIconStatus": "read",
+      "threadColumns": "1",
+      "nodeColumns": "2",
+      "pageTransition": "none",
+      "ambientEffect": "none",
+      "ambientIntensity": 100,
+      "ambientSpeed": 300,
+      "ambientAmount": 300,
+      "ambientSize": 200,
+      "cursor": "default",
+      "cursorThickness": 2,
+      "cursorColorUseTheme": true,
+      "cursorColor": "#ff6b00",
+      "hidePostBg": false,
+      "hideEcosystemBadges": false,
+      "copySelectedTextLink": true,
+      "customNavItems": [],
+      "hiddenNavIds": [
+        "arzCoop",
+        "arzDiscord",
+        "arzHelp",
+        "arzServer"
+      ]
+    }
+  },
+  soft_dark_ice: {
+    "id": "soft_dark_ice",
+    "mode": "dark",
+    "fontApply": "exclude-messages",
+    "fontWeight": "default",
+    "fontSize": "15px",
+    "avatarStyle": "paint-glow",
+    "removeUserPaints": false,
+    "hideUserBanners": false,
+    "bgType": "image",
+    "logoType": "accent-animated",
+    "logoUrl": "",
+    "logoSize": 100,
+    "logoOpacity": 100,
+    "logoGradientAngle": 135,
+    "logoGradientDuration": 3,
+    "logoHover": "scale-glow",
+    "styleThreadPrefixes": true,
+    "defaultUsernameColor": "gray",
+    "accentThreadsMeta": true,
+    "accentPostAttribution": true,
+    "accentButtons": true,
+    "accentThreadList": true,
+    "accentNewBadge": true,
+    "bannedUserStyle": "default",
+    "name": "Soft Dark Ice (Новое)",
+    "font": "'Outfit', sans-serif",
+    "radius": 20,
+    "glassOpacity": 80,
+    "glassBlur": 30,
+    "bgUrl": "https://i.pinimg.com/736x/6e/2f/b8/6e2fb880f6de6bb1cb395a1cb263d8f6.jpg",
+    "bgOpacity": 35,
+    "bgHue": 0,
+    "loadingAnimation": "fade",
+    "accent1": "#6ebeff",
+    "accent2": "#aaebff",
+    "bg": "#070c18",
+    "block": "#121c2c",
+    "text": "#ebf5ff",
+    "tweaks": {
+      "threadViewers": "collapse",
+      "threadReaders": "collapse",
+      "hideFooter": true,
+      "hideMobileEngineBanner": true,
+      "hideSideNavBorder": true,
+      "hideSidebar": false,
+      "hideAvatars": false,
+      "hideYourPosts": false,
+      "hideNewIndicator": false,
+      "hideNewThreadIndicator": false,
+      "hideNodeIcons": false,
+      "hideConversations": false,
+      "hideAlerts": false,
+      "hideSubforums": false,
+      "hidePrefixes": false,
+      "hideSignatures": false,
+      "hideStyleVariation": true,
+      "hideSeasonalStyle": true,
+      "hideBreadcrumbs": false,
+      "hideSectionLinks": false,
+      "hideUserExtras": false,
+      "animatedAvatars": true,
+      "navSearch": "icon-only",
+      "nodeIconStatus": "default",
+      "threadColumns": "1",
+      "nodeColumns": "1",
+      "pageTransition": "none",
+      "ambientEffect": "dust",
+      "ambientIntensity": 40,
+      "ambientSpeed": 100,
+      "ambientAmount": 100,
+      "ambientSize": 100,
+      "cursor": "default",
+      "cursorThickness": 3.5,
+      "cursorColorUseTheme": true,
+      "cursorColor": "#ff6b00",
+      "hidePostBg": false,
+      "hideEcosystemBadges": false,
+      "copySelectedTextLink": true,
+      "customNavItems": [],
+      "hiddenNavIds": [
+        "arzAmnesty",
+        "arzTech",
+        "arzDiscord",
+        "arzServer",
+        "arzCoop"
+      ]
+    }
+  },
   midnight_slate: {
     id: "midnight_slate",
     name: "Midnight Slate",
@@ -1411,9 +1766,17 @@ const DEFAULT_SETTINGS = {
   bgType: "color",
   bgUrl: "",
   bgOpacity: 40,
+  bgHue: 0,
   loadingAnimation: "none",
   logoType: "accent-static",
   logoUrl: "",
+  logoSize: 100,
+  logoOpacity: 100,
+  logoGradientAngle: 135,
+  logoGradientDuration: 3,
+  logoHover: "scale-glow",
+  styleThreadPrefixes: true,
+  defaultUsernameColor: "accent",
   accentThreadsMeta: true,
   accentPostAttribution: true,
   accentButtons: true,
@@ -1423,7 +1786,11 @@ const DEFAULT_SETTINGS = {
 };
 
 const DEFAULT_TWEAKS = {
+  threadViewers: "show",
+  threadReaders: "show",
   hideFooter: false,
+  hideMobileEngineBanner: false,
+  hideSideNavBorder: false,
   hideSidebar: false,
   hideAvatars: false,
   hideYourPosts: false,
@@ -1436,14 +1803,21 @@ const DEFAULT_TWEAKS = {
   hidePrefixes: false,
   hideSignatures: false,
   hideStyleVariation: false,
+  hideSeasonalStyle: false,
   hideBreadcrumbs: false,
   hideSectionLinks: false,
   hideUserExtras: false,
   animatedAvatars: false,
   navSearch: "default",
   nodeIconStatus: "default",
+  threadColumns: "1",
+  nodeColumns: "1",
   pageTransition: "none",
   ambientEffect: "none",
+  ambientIntensity: 40,
+  ambientSpeed: 100,
+  ambientAmount: 100,
+  ambientSize: 100,
   cursor: "default",
   cursorThickness: 2,
   cursorColorUseTheme: true,
@@ -1495,9 +1869,31 @@ const hideUserBannersCheckbox = document.getElementById("hide-user-banners");
 const logoTypeSelect = document.getElementById("logo-type-select");
 const logoUrlInput = document.getElementById("logo-url-input");
 const logoUrlRow = document.getElementById("logo-url-row");
+const logoHoverSelect = document.getElementById("logo-hover-select");
+const logoControls = [
+  { key: "logoSize", id: "size", min: 50, max: 200, fallback: 100, unit: "%" },
+  { key: "logoOpacity", id: "opacity", min: 10, max: 100, fallback: 100, unit: "%" },
+  { key: "logoGradientAngle", id: "gradient-angle", min: 0, max: 360, fallback: 135, unit: "°" },
+  { key: "logoGradientDuration", id: "gradient-duration", min: 0.5, max: 10, fallback: 3, unit: " с" }
+];
+
+function updateLogoControls(settings) {
+  logoControls.forEach(control => {
+    const value = settings[control.key] == null ? control.fallback : Number(settings[control.key]);
+    const normalized = Number.isFinite(value) ? Math.min(control.max, Math.max(control.min, value)) : control.fallback;
+    document.getElementById(`logo-${control.id}-slider`).value = normalized;
+    document.getElementById(`logo-${control.id}-val`).textContent = `${normalized}${control.unit}`;
+  });
+  logoHoverSelect.value = ["none", "scale", "glow", "scale-glow", "tilt", "lift"].includes(settings.logoHover) ? settings.logoHover : "scale-glow";
+  document.getElementById("logo-gradient-angle-row").style.display = ["accent-static", "accent-animated"].includes(settings.logoType || "accent-static") ? "flex" : "none";
+  document.getElementById("logo-gradient-duration-row").style.display = settings.logoType === "accent-animated" ? "flex" : "none";
+}
+
 const radiusSlider = document.getElementById("radius-slider");
 const radiusValLabel = document.getElementById("radius-val");
 
+const styleThreadPrefixesCheckbox = document.getElementById("style-thread-prefixes");
+const defaultUsernameColorSelect = document.getElementById("default-username-color");
 const accentThreadsMetaCheckbox = document.getElementById("tweak-accent-threads-meta");
 const accentPostAttributionCheckbox = document.getElementById("tweak-accent-post-attribution");
 const accentButtonsCheckbox = document.getElementById("tweak-accent-buttons");
@@ -1538,10 +1934,14 @@ const bgUrlInput = document.getElementById("bg-url-input");
 const bgOpacityRow = document.getElementById("bg-opacity-row");
 const bgOpacitySlider = document.getElementById("bg-opacity-slider");
 const bgOpacityVal = document.getElementById("bg-opacity-val");
-const bgTemplatesSection = document.getElementById("bg-templates-section");
+const bgHueRow = document.getElementById("bg-hue-row");
+const bgHueSlider = document.getElementById("bg-hue-slider");
+const bgHueVal = document.getElementById("bg-hue-val");
 
 
 const tweakHideFooter = document.getElementById("tweak-hide-footer");
+const tweakHideMobileEngineBanner = document.getElementById("tweak-hide-mobile-engine-banner");
+const tweakHideSideNavBorder = document.getElementById("tweak-hide-side-nav-border");
 const tweakHideSidebar = document.getElementById("tweak-hide-sidebar");
 const tweakHideAvatars = document.getElementById("tweak-hide-avatars");
 const tweakHideYourPosts = document.getElementById("tweak-hide-your-posts");
@@ -1554,14 +1954,19 @@ const tweakHideSubforums = document.getElementById("tweak-hide-subforums");
 const tweakHidePrefixes = document.getElementById("tweak-hide-prefixes");
 const tweakHideSignatures = document.getElementById("tweak-hide-signatures");
 const tweakHideStyleVariation = document.getElementById("tweak-hide-style-variation");
+const tweakHideSeasonalStyle = document.getElementById("tweak-hide-seasonal-style");
 const tweakHideBreadcrumbs = document.getElementById("tweak-hide-breadcrumbs");
 const tweakHideSectionLinks = document.getElementById("tweak-hide-section-links");
 const tweakHideUserExtras = document.getElementById("tweak-hide-user-extras");
+const tweakThreadViewers = document.getElementById("tweak-thread-viewers");
+const tweakThreadReaders = document.getElementById("tweak-thread-readers");
 const tweakHidePostBg = document.getElementById("tweak-hide-post-bg");
 const tweakHideEcosystemBadges = document.getElementById("tweak-hide-ecosystem-badges");
 const tweakAnimatedAvatars = document.getElementById("tweak-animated-avatars");
 const tweakNavSearch = document.getElementById("tweak-nav-search");
 const tweakNodeIconStatus = document.getElementById("tweak-node-icon-status");
+const tweakThreadColumns = document.getElementById("tweak-thread-columns");
+const tweakNodeColumns = document.getElementById("tweak-node-columns");
 const tweakCopySelectedLink = document.getElementById("tweak-copy-selected-link");
 const tweakAmbientEffect = document.getElementById("tweak-ambient-effect");
 const tweakCursor = document.getElementById("tweak-cursor");
@@ -1640,7 +2045,8 @@ function saveAndBroadcast() {
   globalBgSettings = {
     bgType: currentSettings.bgType || "color",
     bgUrl: currentSettings.bgUrl || "",
-    bgOpacity: currentSettings.bgOpacity !== undefined ? currentSettings.bgOpacity : 40
+    bgOpacity: currentSettings.bgOpacity !== undefined ? currentSettings.bgOpacity : 40,
+    bgHue: currentSettings.bgHue ?? 0
   };
 
   chrome.storage.local.set({
@@ -1889,6 +2295,7 @@ function updateCustomizerUI(settings) {
   logoTypeSelect.value = settings.logoType || "accent-static";
   logoUrlInput.value = settings.logoUrl || "";
   logoUrlRow.style.display = (settings.logoType === "custom") ? "flex" : "none";
+  updateLogoControls(settings);
 
   if (accentNewBadgeCheckbox) {
     accentNewBadgeCheckbox.checked = settings.accentNewBadge !== undefined ? settings.accentNewBadge : true;
@@ -1926,6 +2333,8 @@ function updateCustomizerUI(settings) {
   colorTextInput.value = settings.text;
   colorTextHex.textContent = settings.text.toUpperCase();
 
+  styleThreadPrefixesCheckbox.checked = settings.styleThreadPrefixes !== false;
+  defaultUsernameColorSelect.value = settings.defaultUsernameColor === "gray" ? "gray" : "accent";
   accentThreadsMetaCheckbox.checked = settings.accentThreadsMeta !== undefined ? settings.accentThreadsMeta : true;
   accentPostAttributionCheckbox.checked = settings.accentPostAttribution !== undefined ? settings.accentPostAttribution : true;
   accentButtonsCheckbox.checked = settings.accentButtons !== undefined ? settings.accentButtons : true;
@@ -1962,8 +2371,22 @@ function toggleCursorColorPickerVisibility() {
   }
 }
 
+function updateAmbientSettingsUI() {
+  document.getElementById("ambient-settings").style.display = tweakAmbientEffect.value === "none" ? "none" : "block";
+  ["Intensity", "Speed", "Amount", "Size"].forEach(name => {
+    const id = "ambient-" + name.toLowerCase();
+    const value = globalTweaks["ambient" + name] ?? DEFAULT_TWEAKS["ambient" + name];
+    document.getElementById(id).value = value;
+    document.getElementById(id + "-val").textContent = value + "%";
+  });
+}
+
 function updateTweaksUI() {
+  tweakThreadViewers.value = globalTweaks.threadViewers || "show";
+  tweakThreadReaders.value = globalTweaks.threadReaders || "show";
   tweakHideFooter.checked = globalTweaks.hideFooter || false;
+  tweakHideMobileEngineBanner.checked = globalTweaks.hideMobileEngineBanner || false;
+  tweakHideSideNavBorder.checked = globalTweaks.hideSideNavBorder || false;
   tweakHideSidebar.checked = globalTweaks.hideSidebar || false;
   tweakHideAvatars.checked = globalTweaks.hideAvatars || false;
   tweakHideYourPosts.checked = globalTweaks.hideYourPosts || false;
@@ -1976,6 +2399,7 @@ function updateTweaksUI() {
   tweakHidePrefixes.checked = globalTweaks.hidePrefixes || false;
   tweakHideSignatures.checked = globalTweaks.hideSignatures || false;
   tweakHideStyleVariation.checked = globalTweaks.hideStyleVariation || false;
+  tweakHideSeasonalStyle.checked = globalTweaks.hideSeasonalStyle || false;
   tweakHideBreadcrumbs.checked = globalTweaks.hideBreadcrumbs || false;
   tweakHideSectionLinks.checked = globalTweaks.hideSectionLinks || false;
   tweakHideUserExtras.checked = globalTweaks.hideUserExtras || false;
@@ -1985,7 +2409,10 @@ function updateTweaksUI() {
   tweakAnimatedAvatars.checked = globalTweaks.animatedAvatars || false;
   tweakNavSearch.value = globalTweaks.navSearch || "default";
   tweakNodeIconStatus.value = globalTweaks.nodeIconStatus || "default";
+  tweakThreadColumns.value = ["2", "3"].includes(String(globalTweaks.threadColumns)) ? String(globalTweaks.threadColumns) : "1";
+  tweakNodeColumns.value = ["2", "3"].includes(String(globalTweaks.nodeColumns)) ? String(globalTweaks.nodeColumns) : "1";
   tweakAmbientEffect.value = globalTweaks.ambientEffect || "none";
+  updateAmbientSettingsUI();
   tweakCursor.value = globalTweaks.cursor || "default";
   tweakCursorThickness.value = globalTweaks.cursorThickness !== undefined ? globalTweaks.cursorThickness : 2;
   tweakCursorThicknessVal.textContent = (globalTweaks.cursorThickness !== undefined ? globalTweaks.cursorThickness : 2) + "px";
@@ -2017,20 +2444,22 @@ function updateBackgroundUI(bgSettings) {
   const bgOpacity = bgSettings.bgOpacity !== undefined ? bgSettings.bgOpacity : 40;
   bgOpacitySlider.value = bgOpacity;
   bgOpacityVal.textContent = `${bgOpacity}%`;
+  const bgHue = bgSettings.bgHue ?? 0;
+  bgHueSlider.value = bgHue;
+  bgHueVal.textContent = `${bgHue}°`;
 
   toggleBackgroundRowsVisibility(bgType);
 }
 
 
 function toggleBackgroundRowsVisibility(type) {
+  bgHueRow.style.display = type === "image" ? "flex" : "none";
   if (type === "color") {
     bgUrlRow.style.display = "none";
     bgOpacityRow.style.display = "none";
-    bgTemplatesSection.style.display = "none";
   } else {
     bgUrlRow.style.display = "flex";
     bgOpacityRow.style.display = "flex";
-    bgTemplatesSection.style.display = "block";
   }
 }
 
@@ -2129,8 +2558,23 @@ function setupInputListeners() {
     saveAndBroadcast();
   });
 
+  logoControls.forEach(control => {
+    document.getElementById(`logo-${control.id}-slider`).addEventListener("input", event => {
+      const value = Number(event.target.value);
+      currentSettings[control.key] = value;
+      document.getElementById(`logo-${control.id}-val`).textContent = `${value}${control.unit}`;
+      markAsCustom();
+      saveAndBroadcast();
+    });
+  });
+  logoHoverSelect.addEventListener("change", () => {
+    currentSettings.logoHover = logoHoverSelect.value;
+    markAsCustom();
+    saveAndBroadcast();
+  });
   logoTypeSelect.addEventListener("change", () => {
     currentSettings.logoType = logoTypeSelect.value;
+    updateLogoControls(currentSettings);
     logoUrlRow.style.display = (logoTypeSelect.value === "custom") ? "flex" : "none";
     markAsCustom();
     saveAndBroadcast();
@@ -2211,11 +2655,34 @@ function setupInputListeners() {
   });
 
 
+  bgHueSlider.addEventListener("input", () => {
+    const value = Number(bgHueSlider.value);
+    bgHueVal.textContent = `${value}°`;
+    currentSettings.bgHue = value;
+    markAsCustom();
+    saveAndBroadcast();
+  });
+
   const templateBtns = document.querySelectorAll(".bg-template-btn");
+  let templateRequestId = 0;
   templateBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
+      const requestId = ++templateRequestId;
       const type = btn.getAttribute("data-type");
-      const url = btn.getAttribute("data-url");
+      const path = btn.getAttribute("data-template-path");
+      let result;
+      try {
+        result = await chrome.runtime.sendMessage({ type: "RESOLVE_BACKGROUND_TEMPLATE", path });
+      } catch (error) {
+        if (requestId === templateRequestId) alert("Не удалось проверить доступность шаблона.");
+        return;
+      }
+      if (requestId !== templateRequestId) return;
+      if (!result?.success) {
+        alert(result?.error || "Не удалось загрузить шаблон.");
+        return;
+      }
+      const url = result.url;
 
       currentSettings.bgType = type;
       currentSettings.bgUrl = url;
@@ -2237,6 +2704,16 @@ function setupInputListeners() {
 
   tweakHideFooter.addEventListener("change", () => {
     globalTweaks.hideFooter = tweakHideFooter.checked;
+    markAsCustom();
+    saveAndBroadcast();
+  });
+  tweakHideMobileEngineBanner.addEventListener("change", () => {
+    globalTweaks.hideMobileEngineBanner = tweakHideMobileEngineBanner.checked;
+    markAsCustom();
+    saveAndBroadcast();
+  });
+  tweakHideSideNavBorder.addEventListener("change", () => {
+    globalTweaks.hideSideNavBorder = tweakHideSideNavBorder.checked;
     markAsCustom();
     saveAndBroadcast();
   });
@@ -2295,6 +2772,11 @@ function setupInputListeners() {
     markAsCustom();
     saveAndBroadcast();
   });
+  tweakHideSeasonalStyle.addEventListener("change", () => {
+    globalTweaks.hideSeasonalStyle = tweakHideSeasonalStyle.checked;
+    markAsCustom();
+    saveAndBroadcast();
+  });
   tweakHideStyleVariation.addEventListener("change", () => {
     globalTweaks.hideStyleVariation = tweakHideStyleVariation.checked;
     markAsCustom();
@@ -2314,6 +2796,13 @@ function setupInputListeners() {
     globalTweaks.hideUserExtras = tweakHideUserExtras.checked;
     markAsCustom();
     saveAndBroadcast();
+  });
+  [[tweakThreadViewers, "threadViewers"], [tweakThreadReaders, "threadReaders"]].forEach(([select, key]) => {
+    select.addEventListener("change", () => {
+      globalTweaks[key] = select.value;
+      markAsCustom();
+      saveAndBroadcast();
+    });
   });
   tweakHidePostBg.addEventListener("change", () => {
     globalTweaks.hidePostBg = tweakHidePostBg.checked;
@@ -2340,6 +2829,16 @@ function setupInputListeners() {
     markAsCustom();
     saveAndBroadcast();
   });
+  tweakNodeColumns.addEventListener("change", () => {
+    globalTweaks.nodeColumns = tweakNodeColumns.value;
+    markAsCustom();
+    saveAndBroadcast();
+  });
+  tweakThreadColumns.addEventListener("change", () => {
+    globalTweaks.threadColumns = tweakThreadColumns.value;
+    markAsCustom();
+    saveAndBroadcast();
+  });
   tweakNodeIconStatus.addEventListener("change", () => {
     globalTweaks.nodeIconStatus = tweakNodeIconStatus.value;
     markAsCustom();
@@ -2347,8 +2846,19 @@ function setupInputListeners() {
   });
 
 
+  ["Intensity", "Speed", "Amount", "Size"].forEach(name => {
+    const id = "ambient-" + name.toLowerCase();
+    document.getElementById(id).addEventListener("input", event => {
+      globalTweaks["ambient" + name] = Number(event.target.value);
+      document.getElementById(id + "-val").textContent = event.target.value + "%";
+      markAsCustom();
+      saveAndBroadcast();
+    });
+  });
+
   tweakAmbientEffect.addEventListener("change", () => {
     globalTweaks.ambientEffect = tweakAmbientEffect.value;
+    updateAmbientSettingsUI();
     markAsCustom();
     saveAndBroadcast();
   });
@@ -2611,6 +3121,18 @@ function setupInputListeners() {
     });
   }
 
+  styleThreadPrefixesCheckbox.addEventListener("change", () => {
+    currentSettings.styleThreadPrefixes = styleThreadPrefixesCheckbox.checked;
+    markAsCustom();
+    saveAndBroadcast();
+  });
+
+  defaultUsernameColorSelect.addEventListener("change", () => {
+    currentSettings.defaultUsernameColor = defaultUsernameColorSelect.value;
+    markAsCustom();
+    saveAndBroadcast();
+  });
+
   if (accentThreadsMetaCheckbox) {
     accentThreadsMetaCheckbox.addEventListener("change", () => {
       currentSettings.accentThreadsMeta = accentThreadsMetaCheckbox.checked;
@@ -2709,6 +3231,17 @@ function applyThemeToPopup(settings) {
   root.style.setProperty("--pop-accent", settings.accent1);
   root.style.setProperty("--pop-accent2", settings.accent2);
   root.style.setProperty("--pop-accent-gradient", `linear-gradient(135deg, ${settings.accent1} 0%, ${settings.accent2} 100%)`);
+  const accentLuminances = [settings.accent1, settings.accent2].map(hex => {
+    const expanded = hex.length === 4 ? "#" + [...hex.slice(1)].map(channel => channel + channel).join("") : hex;
+    const channels = expanded.slice(1).match(/.{2}/g).map(channel => {
+      const value = parseInt(channel, 16) / 255;
+      return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+    });
+    return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+  });
+  const darkContrast = (Math.min(...accentLuminances) + 0.05) / 0.05;
+  const lightContrast = 1.05 / (Math.max(...accentLuminances) + 0.05);
+  root.style.setProperty("--pop-accent-text", lightContrast >= 3 || lightContrast >= darkContrast ? "#ffffff" : "#000000");
 
 
   if (settings.fontWeight && settings.fontWeight !== "default") {

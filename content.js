@@ -5,7 +5,6 @@ console.log("[Arizona Styler] Content script loaded.");
 let currentAccent1 = "#ff6b00";
 let currentAccent2 = "#e100ff";
 let originalFontFamily = "";
-let initialLoadComplete = false;
 let activeSettings = null;
 let activeEnabled = true;
 let activeBgSettings = null;
@@ -13,6 +12,25 @@ let activeTweaks = null;
 let activeThemeId = null;
 const usernameColorsCache = new Map();
 let ecosystemApiData = null;
+let ambientCanvas = null;
+let ambientCtx = null;
+let ambientAnimationId = null;
+let ambientParticles = [];
+let activeAmbientType = "none";
+let ambientOptions = { intensity: 40, speed: 100, amount: 100, size: 100 };
+let ambientLastTime = null;
+let ambientBodyObserver = null;
+let logoObserver = null;
+let updateTimer = null;
+let pageMutationObserver = null;
+let fullUpdatePending = false;
+const pendingUpdateRoots = new Set();
+let ecosystemUsersSource = null;
+const ecosystemUsersByName = new Map();
+let animatedAvatarObserver = null;
+let animatedAvatarTimer = null;
+const pendingAnimatedAvatars = new Set();
+
 
 function captureOriginalFont(force = false) {
   if (originalFontFamily && !force) return;
@@ -70,32 +88,6 @@ try {
 if (activeEnabled && hasCachedSettings && activeSettings) {
   applyTheme(activeEnabled, activeSettings, activeBgSettings, activeThemeId, activeTweaks);
 }
-
-if (isEnabledCached && !hasCachedSettings) {
-  const hideStyle = document.createElement("style");
-  hideStyle.id = "arizona-styler-loading-hide";
-  hideStyle.innerHTML = "html { opacity: 0 !important; }";
-  if (document.documentElement) {
-    document.documentElement.appendChild(hideStyle);
-  } else {
-    const obs = new MutationObserver((m, o) => {
-      if (document.documentElement) {
-        document.documentElement.appendChild(hideStyle);
-        o.disconnect();
-      }
-    });
-    obs.observe(document, { childList: true, subtree: true });
-  }
-
-  setTimeout(() => {
-    const loadingHide = document.getElementById("arizona-styler-loading-hide");
-    if (loadingHide) {
-      loadingHide.remove();
-      console.warn("[Arizona Styler] Safety timeout triggered. Showing page.");
-    }
-  }, 500);
-}
-
 
 chrome.storage.local.get(["enabled", "activeThemeId", "currentSettings", "globalBgSettings", "globalTweaks"], (data) => {
   console.log("[Arizona Styler] Storage retrieved:", data);
@@ -246,11 +238,6 @@ chrome.storage.local.get(["enabled", "activeThemeId", "currentSettings", "global
   console.log("[Arizona Styler] Active settings to apply:", settings, bgSettings);
   applyTheme(enabled, settings, bgSettings, data.activeThemeId, tweaks);
 
-  const loadingHide = document.getElementById("arizona-styler-loading-hide");
-  if (loadingHide) {
-    loadingHide.remove();
-  }
-  initialLoadComplete = true;
 });
 
 
@@ -279,20 +266,26 @@ function triggerAppearAnimation(animationType) {
 
 
 function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
+  bgSettings = bgSettings || { bgType: "color", bgUrl: "", bgOpacity: 40 };
+  if (document.documentElement.hasAttribute("data-arizona-styler-enabled") &&
+      activeEnabled === enabled && activeThemeId === themeId &&
+      JSON.stringify(activeSettings) === JSON.stringify(settings) &&
+      JSON.stringify(activeBgSettings) === JSON.stringify(bgSettings) &&
+      JSON.stringify(activeTweaks) === JSON.stringify(tweaks)) return;
   const root = document.documentElement;
   activeSettings = settings;
   activeEnabled = enabled;
   activeBgSettings = bgSettings;
   activeTweaks = tweaks;
+  scheduleIncrementalUpdates();
   activeThemeId = themeId;
+  if (logoObserver) {
+    logoObserver.disconnect();
+    logoObserver = null;
+  }
 
   if (enabled) {
     captureOriginalFont();
-  }
-
-  const loadingHide = document.getElementById("arizona-styler-loading-hide");
-  if (loadingHide) {
-    loadingHide.remove();
   }
 
   const navList = document.querySelector(".p-nav-list.js-offCanvasNavSource");
@@ -303,6 +296,8 @@ function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
   if (!enabled) {
     root.removeAttribute("data-arizona-styler-enabled");
     root.removeAttribute("data-arizona-styler-mode");
+    root.removeAttribute("data-arizona-styler-default-username-color");
+    root.removeAttribute("data-arizona-styler-style-thread-prefixes");
     root.removeAttribute("data-arizona-styler-theme");
     root.removeAttribute("data-arizona-styler-avatar-style");
     root.removeAttribute("data-arizona-styler-font-apply");
@@ -310,12 +305,17 @@ function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
     root.removeAttribute("data-arizona-styler-hide-user-banners");
     root.removeAttribute("data-arizona-styler-hide-ecosystem-badges");
     root.removeAttribute("data-arizona-styler-logo-type");
+    root.removeAttribute("data-arizona-styler-logo-hover");
+    root.removeAttribute("data-arizona-styler-thread-columns");
+    root.removeAttribute("data-arizona-styler-node-columns");
     root.removeAttribute("data-arizona-styler-accent-threads-meta");
     root.removeAttribute("data-arizona-styler-accent-post-attribution");
     root.removeAttribute("data-arizona-styler-accent-buttons");
     root.removeAttribute("data-arizona-styler-accent-thread-list");
     root.style.removeProperty("--arizona-styler-logo-custom-src");
     root.removeAttribute("data-arizona-styler-hide-footer");
+    root.removeAttribute("data-arizona-styler-hide-mobile-engine-banner");
+    root.removeAttribute("data-arizona-styler-hide-side-nav-border");
     root.removeAttribute("data-arizona-styler-hide-sidebar");
     root.removeAttribute("data-arizona-styler-hide-avatars");
     root.removeAttribute("data-arizona-styler-hide-your-posts");
@@ -328,6 +328,7 @@ function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
     root.removeAttribute("data-arizona-styler-hide-prefixes");
     root.removeAttribute("data-arizona-styler-hide-signatures");
     root.removeAttribute("data-arizona-styler-hide-style-variation");
+    root.removeAttribute("data-arizona-styler-hide-seasonal-style");
     root.removeAttribute("data-arizona-styler-hide-breadcrumbs");
     root.removeAttribute("data-arizona-styler-hide-section-links");
     root.removeAttribute("data-arizona-styler-hide-user-extras");
@@ -361,6 +362,7 @@ function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
       el.removeAttribute('data-arizona-styler-banner-processed');
     });
     resetBadges();
+    injectBannedUserIcons();
 
     updateAnimatedAvatars();
     
@@ -387,6 +389,12 @@ function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
   }
 
   const threadsMeta = settings.accentThreadsMeta !== undefined ? settings.accentThreadsMeta : true;
+  root.setAttribute("data-arizona-styler-style-thread-prefixes", settings.styleThreadPrefixes !== false ? "true" : "false");
+  root.setAttribute("data-arizona-styler-default-username-color", settings.defaultUsernameColor === "gray" ? "gray" : "accent");
+  root.style.setProperty("--arizona-styler-default-username-color", settings.defaultUsernameColor === "gray" ? "var(--arizona-styler-text-secondary)" : "var(--arizona-styler-accent1)");
+  document.querySelectorAll('.avatar[data-arizona-styler-avatar-checked]').forEach(el => {
+    el.removeAttribute('data-arizona-styler-avatar-checked');
+  });
   const postAttribution = settings.accentPostAttribution !== undefined ? settings.accentPostAttribution : true;
   const buttons = settings.accentButtons !== undefined ? settings.accentButtons : true;
   const threadList = settings.accentThreadList !== undefined ? settings.accentThreadList : true;
@@ -431,6 +439,18 @@ function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
     root.setAttribute("data-arizona-styler-logo-type", "accent-static");
   }
 
+  const logoNumber = (key, fallback, min, max) => {
+    const value = settings[key] == null ? fallback : Number(settings[key]);
+    return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+  };
+  const logoSize = logoNumber("logoSize", 100, 50, 200) / 100;
+  root.style.setProperty("--arizona-styler-logo-width", `${40 * logoSize}px`);
+  root.style.setProperty("--arizona-styler-logo-height", `${36 * logoSize}px`);
+  root.style.setProperty("--arizona-styler-logo-opacity", logoNumber("logoOpacity", 100, 10, 100) / 100);
+  root.style.setProperty("--arizona-styler-logo-angle", `${logoNumber("logoGradientAngle", 135, 0, 360)}deg`);
+  root.style.setProperty("--arizona-styler-logo-duration", `${logoNumber("logoGradientDuration", 3, 0.5, 10)}s`);
+  root.setAttribute("data-arizona-styler-logo-hover", ["none", "scale", "glow", "scale-glow", "tilt", "lift"].includes(settings.logoHover) ? settings.logoHover : "scale-glow");
+
   if (settings.logoUrl) {
     root.style.setProperty("--arizona-styler-logo-custom-src", `url("${settings.logoUrl}")`);
   } else {
@@ -461,10 +481,23 @@ function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
 
   
   if (tweaks) {
+    root.setAttribute("data-arizona-styler-thread-columns", ["2", "3"].includes(String(tweaks.threadColumns)) ? String(tweaks.threadColumns) : "1");
+    root.setAttribute("data-arizona-styler-node-columns", ["2", "3"].includes(String(tweaks.nodeColumns)) ? String(tweaks.nodeColumns) : "1");
     if (tweaks.hideFooter) {
       root.setAttribute("data-arizona-styler-hide-footer", "true");
     } else {
       root.removeAttribute("data-arizona-styler-hide-footer");
+    root.removeAttribute("data-arizona-styler-hide-mobile-engine-banner");
+    }
+    if (tweaks.hideMobileEngineBanner) {
+      root.setAttribute("data-arizona-styler-hide-mobile-engine-banner", "true");
+    } else {
+      root.removeAttribute("data-arizona-styler-hide-mobile-engine-banner");
+    }
+    if (tweaks.hideSideNavBorder) {
+      root.setAttribute("data-arizona-styler-hide-side-nav-border", "true");
+    } else {
+      root.removeAttribute("data-arizona-styler-hide-side-nav-border");
     }
     if (tweaks.hideSidebar) {
       root.setAttribute("data-arizona-styler-hide-sidebar", "true");
@@ -520,6 +553,11 @@ function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
       root.setAttribute("data-arizona-styler-hide-signatures", "true");
     } else {
       root.removeAttribute("data-arizona-styler-hide-signatures");
+    }
+    if (tweaks.hideSeasonalStyle) {
+      root.setAttribute("data-arizona-styler-hide-seasonal-style", "true");
+    } else {
+      root.removeAttribute("data-arizona-styler-hide-seasonal-style");
     }
     if (tweaks.hideStyleVariation) {
       root.setAttribute("data-arizona-styler-hide-style-variation", "true");
@@ -578,14 +616,18 @@ function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
       applyDynamicCursor("default", settings.accent1, 2);
     }
     if (tweaks.ambientEffect && tweaks.ambientEffect !== "none") {
-      startAmbientEffect(tweaks.ambientEffect);
+      startAmbientEffect(tweaks.ambientEffect, tweaks);
     } else {
       stopAmbientEffect();
     }
     applyNavbarHiding(tweaks.hiddenNavIds);
     renderCustomNavItems(tweaks.customNavItems);
   } else {
+    root.removeAttribute("data-arizona-styler-thread-columns");
+    root.removeAttribute("data-arizona-styler-node-columns");
     root.removeAttribute("data-arizona-styler-hide-footer");
+    root.removeAttribute("data-arizona-styler-hide-mobile-engine-banner");
+    root.removeAttribute("data-arizona-styler-hide-side-nav-border");
     root.removeAttribute("data-arizona-styler-hide-sidebar");
     root.removeAttribute("data-arizona-styler-hide-avatars");
     root.removeAttribute("data-arizona-styler-hide-your-posts");
@@ -596,6 +638,8 @@ function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
     root.removeAttribute("data-arizona-styler-hide-subforums");
     root.removeAttribute("data-arizona-styler-hide-prefixes");
     root.removeAttribute("data-arizona-styler-hide-signatures");
+    root.removeAttribute("data-arizona-styler-hide-style-variation");
+    root.removeAttribute("data-arizona-styler-hide-seasonal-style");
     root.removeAttribute("data-arizona-styler-nav-search");
     root.removeAttribute("data-arizona-styler-node-icon-status");
     applyDynamicCursor("default", settings.accent1, 2);
@@ -661,12 +705,23 @@ function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
   const bgType = bgSettings.bgType || "color";
   const bgUrl = bgSettings.bgUrl || "";
   const bgOpacity = bgSettings.bgOpacity !== undefined ? bgSettings.bgOpacity : 40;
+  const bgHueValue = Number(bgSettings.bgHue ?? 0);
+  const bgHue = Number.isFinite(bgHueValue) ? Math.max(-180, Math.min(180, bgHueValue)) : 0;
   
   root.style.setProperty("--arizona-styler-bg-opacity", bgOpacity / 100);
+  root.style.setProperty("--arizona-styler-bg-hue", `${bgHue}deg`);
+  root.style.setProperty("--arizona-styler-bg-filter", bgHue === 0 ? "none" : `hue-rotate(${bgHue}deg)`);
 
   if (bgType === "image" && bgUrl) {
     root.style.setProperty("--arizona-styler-bg-image", `url("${bgUrl}")`);
     root.style.setProperty("--arizona-styler-bg-override", "transparent");
+    const templateMatch = bgUrl.match(/^https:\/\/arizona-ai\.(?:ru|tech)(\/static\/img\/extensions_backgrounds\/[a-zA-Z0-9_%.-]+)$/);
+    if (templateMatch && chrome.runtime?.id) {
+      chrome.runtime.sendMessage({ type: "RESOLVE_BACKGROUND_TEMPLATE", path: templateMatch[1] }, result => {
+        if (chrome.runtime.lastError || !result?.success || !activeEnabled || activeBgSettings?.bgType !== "image" || activeBgSettings?.bgUrl !== bgUrl) return;
+        root.style.setProperty("--arizona-styler-bg-image", `url("${result.url}")`);
+      });
+    }
   } else if (bgType === "video" && bgUrl) {
     root.style.setProperty("--arizona-styler-bg-image", "none");
     root.style.setProperty("--arizona-styler-bg-override", "transparent");
@@ -879,27 +934,19 @@ function applyTheme(enabled, settings, bgSettings, themeId, tweaks) {
       const logoSrc = logoImg.getAttribute("src");
       if (logoSrc) {
         root.style.setProperty("--arizona-styler-logo-url", `url("${logoSrc}")`);
+        return true;
       }
     }
   };
-  updateLogoUrl();
-
-  const logoObserver = new MutationObserver((mutations, obs) => {
-    const logoImg = document.querySelector(".p-header-logo img");
-    if (logoImg) {
-      const logoSrc = logoImg.getAttribute("src");
-      if (logoSrc) {
-        root.style.setProperty("--arizona-styler-logo-url", `url("${logoSrc}")`);
-        obs.disconnect();
+  if (!updateLogoUrl() && document.readyState === "loading") {
+    logoObserver = new MutationObserver(() => {
+      if (updateLogoUrl()) {
+        logoObserver.disconnect();
+        logoObserver = null;
       }
-    }
-  });
-  logoObserver.observe(document.documentElement, { childList: true, subtree: true });
-
-  
-  injectDeveloperBadges();
-  updateUserColorsAndBanners();
-  updateAnimatedAvatars();
+    });
+    logoObserver.observe(document.documentElement, { childList: true, subtree: true });
+  }
 }
 
 
@@ -942,6 +989,10 @@ function syncForumStyleVariation(mode) {
   
   const performSync = () => {
     
+    if (!activeEnabled || activeSettings?.mode !== mode) return;
+    const currentVariation = document.documentElement.getAttribute("data-variation") || document.documentElement.getAttribute("data-style-variation");
+    const currentScheme = document.documentElement.getAttribute("data-color-scheme");
+    if (currentVariation === targetVariation || currentScheme === mode) return;
     const toggleLink = document.querySelector(`a[href*="misc/style-variation"][href*="variation=${targetVariation}"], a[data-xf-click="style-variation"][data-variation="${targetVariation}"]`);
     
     if (toggleLink) {
@@ -958,7 +1009,6 @@ function syncForumStyleVariation(mode) {
     }
     
     
-    const currentVariation = document.documentElement.getAttribute("data-style-variation");
     if (currentVariation && currentVariation !== targetVariation) {
       console.log(`[Arizona Styler] Mismatch attribute detected (${currentVariation} vs ${targetVariation}). Trying API fetch...`);
       
@@ -1060,7 +1110,7 @@ function initEcosystemApi() {
 
     if (cached && cached.data && Array.isArray(cached.data.users)) {
       ecosystemApiData = cached.data.users;
-      runIncrementalUpdates();
+      scheduleIncrementalUpdates();
 
       if (now - cached.timestamp > CACHE_DURATION) {
         try {
@@ -1073,7 +1123,7 @@ function initEcosystemApi() {
           });
           ecosystemApiData = freshData.users;
           resetBadges();
-          runIncrementalUpdates();
+          scheduleIncrementalUpdates();
         } catch (err) {
           console.error('[Arizona Styler] Background revalidation failed:', err);
         }
@@ -1088,7 +1138,7 @@ function initEcosystemApi() {
           }
         });
         ecosystemApiData = freshData.users;
-        runIncrementalUpdates();
+        scheduleIncrementalUpdates();
       } catch (err) {
         console.error('[Arizona Styler] Initial fetch failed:', err);
         ecosystemApiData = [];
@@ -1097,13 +1147,13 @@ function initEcosystemApi() {
   });
 }
 
-function injectDeveloperBadges() {
+function injectDeveloperBadges(scope = document) {
   const root = document.documentElement;
   const enabled = root.getAttribute("data-arizona-styler-enabled") === "true";
   const hideEcosystem = root.getAttribute("data-arizona-styler-hide-ecosystem-badges") === "true";
 
   if (!enabled || hideEcosystem) {
-    resetBadges();
+    if (scope === document) resetBadges();
     return;
   }
 
@@ -1111,8 +1161,20 @@ function injectDeveloperBadges() {
     return;
   }
 
+  if (ecosystemUsersSource !== ecosystemApiData) {
+    ecosystemUsersSource = ecosystemApiData;
+    ecosystemUsersByName.clear();
+    ecosystemApiData.forEach(user => {
+      if (!Array.isArray(user.alternative_nicknames)) return;
+      user.alternative_nicknames.forEach(name => {
+        const normalized = normalizeName(name);
+        if (!ecosystemUsersByName.has(normalized)) ecosystemUsersByName.set(normalized, user);
+      });
+    });
+  }
+
   const selector = '.username, [class*="username"]';
-  const candidates = document.querySelectorAll(selector);
+  const candidates = selectWithin(scope, selector);
 
   candidates.forEach(el => {
     if (el.querySelector('img') || el.classList.contains('avatar') || el.closest('.avatar') || el.closest('.avatarWrapper')) {
@@ -1145,9 +1207,7 @@ function injectDeveloperBadges() {
     const text = target.textContent.trim();
     const normalizedTarget = normalizeName(text);
 
-    const apiUser = ecosystemApiData.find(u => {
-      return Array.isArray(u.alternative_nicknames) && u.alternative_nicknames.some(nick => normalizeName(nick) === normalizedTarget);
-    });
+    const apiUser = ecosystemUsersByName.get(normalizedTarget);
 
     if (apiUser) {
       target.setAttribute('data-arizona-ecosystem-badged', 'true');
@@ -1278,17 +1338,17 @@ function getColorFilter(colorStr) {
   return `sepia(1) hue-rotate(${hueRotate}deg) saturate(${saturate}%) brightness(${brightness}%)`;
 }
 
-function injectBannedUserIcons() {
+function injectBannedUserIcons(scope = document) {
   const root = document.documentElement;
   const enabled = root.getAttribute("data-arizona-styler-enabled") === "true";
   const bannedStyle = root.getAttribute("data-arizona-styler-banned-style");
 
   if (!enabled || bannedStyle !== "icon") {
-    document.querySelectorAll('.arizona-styler-banned-icon').forEach(el => el.remove());
+    selectWithin(scope, '.arizona-styler-banned-icon').forEach(el => el.remove());
     return;
   }
 
-  const bannedElements = document.querySelectorAll('.username--banned');
+  const bannedElements = selectWithin(scope, '.username--banned');
   bannedElements.forEach(el => {
     const parentLink = el.closest('a') || el;
     if (parentLink.parentNode.querySelector('.arizona-styler-banned-icon')) return;
@@ -1305,20 +1365,20 @@ function injectBannedUserIcons() {
   });
 }
 
-function updateUserColorsAndBanners() {
+function updateUserColorsAndBanners(scope = document) {
   const root = document.documentElement;
   const enabled = root.getAttribute("data-arizona-styler-enabled") === "true";
   
   if (!enabled) {
-    document.querySelectorAll('.avatar[data-arizona-styler-paint-processed="true"]').forEach(el => {
+    selectWithin(scope, '.avatar[data-arizona-styler-paint-processed="true"]').forEach(el => {
       el.style.removeProperty('--avatar-paint-color');
       el.removeAttribute('data-arizona-styler-paint-processed');
     });
-    document.querySelectorAll('.userBanner[data-arizona-styler-banner-processed="true"]').forEach(el => {
+    selectWithin(scope, '.userBanner[data-arizona-styler-banner-processed="true"]').forEach(el => {
       el.style.removeProperty('--user-banner-filter');
       el.removeAttribute('data-arizona-styler-banner-processed');
     });
-    document.querySelectorAll('.avatar[data-arizona-styler-avatar-checked]').forEach(el => {
+    selectWithin(scope, '.avatar[data-arizona-styler-avatar-checked]').forEach(el => {
       el.removeAttribute('data-arizona-styler-avatar-checked');
     });
     return;
@@ -1332,17 +1392,17 @@ function updateUserColorsAndBanners() {
   const needBannerPaint = removePaints;
 
   if (!needAvatarPaint) {
-    document.querySelectorAll('.avatar[data-arizona-styler-paint-processed="true"]').forEach(el => {
+    selectWithin(scope, '.avatar[data-arizona-styler-paint-processed="true"]').forEach(el => {
       el.style.removeProperty('--avatar-paint-color');
       el.removeAttribute('data-arizona-styler-paint-processed');
     });
-    document.querySelectorAll('.avatar[data-arizona-styler-avatar-checked]').forEach(el => {
+    selectWithin(scope, '.avatar[data-arizona-styler-avatar-checked]').forEach(el => {
       el.removeAttribute('data-arizona-styler-avatar-checked');
     });
   }
 
   if (!needBannerPaint) {
-    document.querySelectorAll('.userBanner[data-arizona-styler-banner-processed="true"]').forEach(el => {
+    selectWithin(scope, '.userBanner[data-arizona-styler-banner-processed="true"]').forEach(el => {
       el.style.removeProperty('--user-banner-filter');
       el.removeAttribute('data-arizona-styler-banner-processed');
     });
@@ -1352,6 +1412,11 @@ function updateUserColorsAndBanners() {
     return;
   }
 
+  const avatars = needAvatarPaint ? selectWithin(scope, '.avatar:not([data-arizona-styler-avatar-checked="true"])') : [];
+  const banners = selectWithin(scope, '.userBanner');
+  if (!avatars.length && !banners.length) return;
+  const paintUpdates = [];
+  const usernameColors = new Map();
   const hasPaintOverride = root.hasAttribute("data-arizona-styler-remove-user-paints");
   if (hasPaintOverride) {
     root.removeAttribute("data-arizona-styler-remove-user-paints");
@@ -1359,8 +1424,10 @@ function updateUserColorsAndBanners() {
 
   function getUsernameColor(usernameEl) {
     if (!usernameEl) return null;
+    if (usernameColors.has(usernameEl)) return usernameColors.get(usernameEl);
     const coloredEl = usernameEl.querySelector('[class*="username--style"], [style*="color"], span, strong, b') || usernameEl;
     const color = window.getComputedStyle(coloredEl).color;
+    usernameColors.set(usernameEl, color);
     return color;
   }
 
@@ -1411,34 +1478,30 @@ function updateUserColorsAndBanners() {
 
   if (needAvatarPaint) {
     const bannedStyle = root.getAttribute("data-arizona-styler-banned-style");
-    const avatars = document.querySelectorAll('.avatar');
     avatars.forEach(avatarEl => {
-      if (avatarEl.getAttribute('data-arizona-styler-avatar-checked') === 'true') {
-        return;
-      }
-      avatarEl.setAttribute('data-arizona-styler-avatar-checked', 'true');
-
       const usernameEl = findUsernameEl(avatarEl);
       if (usernameEl) {
         let color = getUsernameColor(usernameEl);
-        if (usernameEl.querySelector('.username--banned') && bannedStyle === 'red-paint') {
+        if ((usernameEl.matches('.username--banned') || usernameEl.querySelector('.username--banned')) && bannedStyle === 'red-paint') {
           color = '#ff4d4d';
         }
         if (color) {
-          avatarEl.style.setProperty('--avatar-paint-color', color);
-          avatarEl.setAttribute('data-arizona-styler-paint-processed', 'true');
+          paintUpdates.push(() => {
+            avatarEl.style.setProperty('--avatar-paint-color', color);
+            avatarEl.setAttribute('data-arizona-styler-paint-processed', 'true');
+            avatarEl.setAttribute('data-arizona-styler-avatar-checked', 'true');
+          });
         }
       }
     });
   }
 
-  const banners = document.querySelectorAll('.userBanner');
   banners.forEach(bannerEl => {
     const usernameEl = findUsernameEl(bannerEl);
     if (usernameEl) {
       const isBanned = usernameEl.querySelector('.username--banned') !== null || usernameEl.classList.contains('username--banned');
       if (isBanned) {
-        bannerEl.style.setProperty('display', 'none', 'important');
+        paintUpdates.push(() => bannerEl.style.setProperty('display', 'none', 'important'));
         return;
       }
 
@@ -1447,8 +1510,10 @@ function updateUserColorsAndBanners() {
         if (color) {
           const filterStr = getColorFilter(color);
           if (filterStr) {
-            bannerEl.style.setProperty('--user-banner-filter', filterStr);
-            bannerEl.setAttribute('data-arizona-styler-banner-processed', 'true');
+            paintUpdates.push(() => {
+              bannerEl.style.setProperty('--user-banner-filter', filterStr);
+              bannerEl.setAttribute('data-arizona-styler-banner-processed', 'true');
+            });
           }
         }
       }
@@ -1458,10 +1523,46 @@ function updateUserColorsAndBanners() {
   if (hasPaintOverride) {
     root.setAttribute("data-arizona-styler-remove-user-paints", "true");
   }
+  paintUpdates.forEach(update => update());
 }
 
-let updateRequested = false;
-let pageMutationObserver = null;
+function selectWithin(scope, selector) {
+  const elements = Array.from(scope.querySelectorAll(selector));
+  if (scope.nodeType === 1 && scope.matches(selector)) elements.unshift(scope);
+  return elements;
+}
+
+function scheduleIncrementalUpdates(scope = document) {
+  if (scope === document) {
+    fullUpdatePending = true;
+    pendingUpdateRoots.clear();
+  } else if (!fullUpdatePending && scope.isConnected) {
+    for (const pending of pendingUpdateRoots) {
+      if (pending.contains(scope)) return;
+      if (scope.contains(pending)) pendingUpdateRoots.delete(pending);
+    }
+    pendingUpdateRoots.add(scope);
+  }
+  if (document.readyState === "loading" || updateTimer !== null) return;
+  const flush = () => {
+    updateTimer = null;
+    const scopes = fullUpdatePending ? [document] : Array.from(pendingUpdateRoots);
+    fullUpdatePending = false;
+    pendingUpdateRoots.clear();
+    if (!chrome.runtime?.id) return;
+    if (pageMutationObserver) pageMutationObserver.disconnect();
+    try {
+      scopes.forEach(target => {
+        if (target === document || target.isConnected) runIncrementalUpdates(target);
+      });
+    } finally {
+      if (pageMutationObserver) {
+        pageMutationObserver.observe(document.body || document.documentElement, { childList: true, subtree: true });
+      }
+    }
+  };
+  updateTimer = typeof requestIdleCallback === "function" ? requestIdleCallback(flush, { timeout: 200 }) : setTimeout(flush, 32);
+}
 
 function observePageMutations() {
   if (pageMutationObserver) {
@@ -1474,24 +1575,15 @@ function observePageMutations() {
       return;
     }
 
-    let hasAddedNodes = false;
-    for (let i = 0; i < mutations.length; i++) {
-      if (mutations[i].addedNodes.length > 0) {
-        hasAddedNodes = true;
-        break;
-      }
-    }
-
-    if (hasAddedNodes) {
-      if (!updateRequested) {
-        updateRequested = true;
-        requestAnimationFrame(() => {
-          updateRequested = false;
-          if (!chrome.runtime || !chrome.runtime.id) return;
-          runIncrementalUpdates();
-        });
-      }
-    }
+    if (!activeEnabled) return;
+    mutations.forEach(mutation => {
+      mutation.addedNodes.forEach(node => {
+        if (node.nodeType !== 1) return;
+        if (node.matches('script, style, link, .arizona-styler-dev-badge, .arizona-styler-banned-icon, .arizona-styler-custom-nav, .arizona-styler-copy-link-btn, .arizona-styler-activity-toggle')) return;
+        const scope = node.closest('.message, .structItem, .memberHeader, .memberTooltip, .tooltip, .menu, .block-userActivity, .p-nav-list') || node;
+        scheduleIncrementalUpdates(scope);
+      });
+    });
   });
 
   pageMutationObserver.observe(document.body || document.documentElement, { childList: true, subtree: true });
@@ -1612,12 +1704,65 @@ function checkAndInjectCopySelectionLink() {
   }
 }
 
-function runIncrementalUpdates() {
-  injectDeveloperBadges();
-  updateUserColorsAndBanners();
-  updateAnimatedAvatars();
+function updateThreadActivityBlocks(scope = document) {
+  selectWithin(scope, ".block-container.block-userActivity").forEach(container => {
+    const header = container.querySelector(".block-userActivity--header");
+    const block = container.closest(".block");
+    if (!header || !block) return;
+    const title = header.textContent;
+    const key = title.includes("Пользователи просматривающие тему") ? "threadViewers" : title.includes("Кто прочёл эту тему") ? "threadReaders" : null;
+    if (!key) return;
+    const mode = activeEnabled && activeTweaks ? activeTweaks[key] : "show";
+    let toggle = header.querySelector(".arizona-styler-activity-toggle");
+    if (mode !== "hide" && mode !== "collapse") {
+      block.removeAttribute("data-arizona-styler-activity");
+      block.removeAttribute("data-arizona-styler-activity-expanded");
+      if (toggle) toggle.remove();
+      return;
+    }
+    if (block.getAttribute("data-arizona-styler-activity") !== mode) {
+      block.setAttribute("data-arizona-styler-activity", mode);
+      block.removeAttribute("data-arizona-styler-activity-expanded");
+    }
+    if (mode === "hide") {
+      if (toggle) toggle.remove();
+      return;
+    }
+    if (!toggle) {
+      toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "arizona-styler-activity-toggle";
+      let animation = null;
+      toggle.addEventListener("click", () => {
+        const body = container.querySelector(":scope > .block-body");
+        const height = body ? body.getBoundingClientRect().height : 0;
+        if (animation) animation.cancel();
+        const expanded = block.getAttribute("data-arizona-styler-activity-expanded") !== "true";
+        block.setAttribute("data-arizona-styler-activity-expanded", String(expanded));
+        toggle.setAttribute("aria-expanded", String(expanded));
+        toggle.textContent = expanded ? "Свернуть" : "Показать";
+        if (body && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          animation = body.animate([
+            { height: `${height}px`, visibility: "visible" },
+            { height: `${expanded ? body.scrollHeight : 0}px`, visibility: "visible" }
+          ], { duration: 240, easing: "cubic-bezier(0.22, 1, 0.36, 1)" });
+        }
+      });
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.textContent = "Показать";
+      header.appendChild(toggle);
+    }
+  });
+}
+
+function runIncrementalUpdates(scope = document) {
+  updateThreadActivityBlocks(scope);
+  if (!activeEnabled) return;
+  injectDeveloperBadges(scope);
+  updateUserColorsAndBanners(scope);
+  updateAnimatedAvatars(scope);
   checkAndInjectCopySelectionLink();
-  injectBannedUserIcons();
+  injectBannedUserIcons(scope);
   
   if (activeEnabled && activeTweaks) {
     const navList = document.querySelector(".p-nav-list.js-offCanvasNavSource");
@@ -1645,15 +1790,19 @@ function initNavbarLogic() {
 initEcosystemApi();
 
 if (document.readyState === "loading") {
-  observePageMutations();
   document.addEventListener("DOMContentLoaded", () => {
     captureOriginalFont();
-    runIncrementalUpdates();
+    scheduleIncrementalUpdates();
     initNavbarLogic();
+    observePageMutations();
+    if (logoObserver) {
+      logoObserver.disconnect();
+      logoObserver = null;
+    }
   });
 } else {
   captureOriginalFont();
-  runIncrementalUpdates();
+  scheduleIncrementalUpdates();
   initNavbarLogic();
   observePageMutations();
 }
@@ -1669,14 +1818,21 @@ setTimeout(() => {
 
 
 
-let ambientCanvas = null;
-let ambientCtx = null;
-let ambientAnimationId = null;
-let ambientParticles = [];
-let activeAmbientType = "none";
 
-function startAmbientEffect(type) {
-  if (activeAmbientType === type) return; 
+function startAmbientEffect(type, tweaks = {}) {
+  const clamp = (value, fallback, min, max) => {
+    const number = Number(value ?? fallback);
+    return Number.isFinite(number) ? Math.max(min, Math.min(max, number)) : fallback;
+  };
+  const previousAmount = ambientOptions.amount;
+  ambientOptions = {
+    intensity: clamp(tweaks.ambientIntensity, 40, 0, 100),
+    speed: clamp(tweaks.ambientSpeed, 100, 25, 300),
+    amount: clamp(tweaks.ambientAmount, 100, 25, 300),
+    size: clamp(tweaks.ambientSize, 100, 50, 200)
+  };
+  if (ambientCanvas) ambientCanvas.style.setProperty("--arizona-styler-ambient-opacity", ambientOptions.intensity / 100);
+  if (activeAmbientType === type && previousAmount === ambientOptions.amount) return;
   stopAmbientEffect();
   activeAmbientType = type;
 
@@ -1688,6 +1844,7 @@ function startAmbientEffect(type) {
       canvas.className = "arizona-styler-ambient-canvas";
       parent.insertBefore(canvas, parent.firstChild);
     }
+    canvas.style.setProperty("--arizona-styler-ambient-opacity", ambientOptions.intensity / 100);
     ambientCanvas = canvas;
     ambientCtx = ambientCanvas.getContext("2d");
     
@@ -1703,6 +1860,7 @@ function startAmbientEffect(type) {
     else if (type === "rain") count = 100;
     else if (type === "matrix") count = 75;
 
+    count = Math.round(count * ambientOptions.amount / 100);
     for (let i = 0; i < count; i++) {
       ambientParticles.push(createAmbientParticle(type, false));
     }
@@ -1713,17 +1871,22 @@ function startAmbientEffect(type) {
   if (document.body) {
     appendCanvas(document.body);
   } else {
-    const observer = new MutationObserver((mutations, obs) => {
+    ambientBodyObserver = new MutationObserver((mutations, obs) => {
       if (document.body) {
         appendCanvas(document.body);
         obs.disconnect();
       }
     });
-    observer.observe(document.documentElement, { childList: true });
+    ambientBodyObserver.observe(document.documentElement, { childList: true });
   }
 }
 
 function stopAmbientEffect() {
+  if (ambientBodyObserver) {
+    ambientBodyObserver.disconnect();
+    ambientBodyObserver = null;
+  }
+  ambientLastTime = null;
   if (ambientAnimationId) {
     cancelAnimationFrame(ambientAnimationId);
     ambientAnimationId = null;
@@ -1825,65 +1988,80 @@ function createAmbientParticle(type, reinit = false) {
   return {};
 }
 
-function animateAmbient() {
-  if (!ambientCtx || !ambientCanvas) return;
+function animateAmbient(timestamp) {
+  ambientAnimationId = null;
+  if (!ambientCtx || !ambientCanvas || document.hidden) return;
+  const now = timestamp ?? performance.now();
+  if (ambientLastTime !== null && now - ambientLastTime < 1000 / 60 - 1) {
+    ambientAnimationId = requestAnimationFrame(animateAmbient);
+    return;
+  }
   if (ambientCanvas.width === 0 || ambientCanvas.height === 0) {
     resizeAmbientCanvas();
   }
   ambientCtx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
 
+  const elapsed = ambientLastTime === null ? 1 : Math.min((now - ambientLastTime) / (1000 / 60), 3);
+  ambientLastTime = now;
+  const step = elapsed * ambientOptions.speed / 100;
+  const size = ambientOptions.size / 100;
   const accent1 = currentAccent1;
   const accent2 = currentAccent2;
   const w = ambientCanvas.width;
   const h = ambientCanvas.height;
 
-  ambientParticles.forEach((p, idx) => {
-    if (activeAmbientType === "snow" || activeAmbientType === "particles") {
-      p.x += p.vx;
-      p.y += p.vy;
-
-      ambientCtx.beginPath();
-      ambientCtx.fillStyle = p.color === "accent" ? (idx % 2 === 0 ? accent1 : accent2) : p.color;
-      ambientCtx.globalAlpha = p.opacity;
-      ambientCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      ambientCtx.fill();
-      ambientCtx.globalAlpha = 1.0;
-
-      if (activeAmbientType === "snow") {
-        if (p.y > h + 10 || p.x < -10 || p.x > w + 10) {
-          ambientParticles[idx] = createAmbientParticle("snow", true);
-        }
-      } else {
-        if (p.y < -10 || p.x < -10 || p.x > w + 10) {
-          ambientParticles[idx] = createAmbientParticle("particles", true);
-        }
+  if (activeAmbientType === "snow" || activeAmbientType === "particles") {
+    const snow = activeAmbientType === "snow";
+    ambientParticles.forEach((p, idx) => {
+      p.x += p.vx * step;
+      p.y += p.vy * step;
+      if ((snow ? p.y > h + 10 : p.y < -10) || p.x < -10 || p.x > w + 10) {
+        ambientParticles[idx] = createAmbientParticle(activeAmbientType, true);
       }
-    } else if (activeAmbientType === "dust") {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.opacity -= p.fadeSpeed;
+    });
+    const colorCount = snow ? 1 : 2;
+    for (let color = 0; color < colorCount; color++) {
+      ambientCtx.fillStyle = snow ? "#ffffff" : color === 0 ? accent1 : accent2;
+      for (let opacity = 0; opacity < 10; opacity++) {
+        ambientCtx.beginPath();
+        ambientCtx.globalAlpha = (opacity + 0.5) / 10;
+        ambientParticles.forEach((p, idx) => {
+          if ((!snow && idx % 2 !== color) || Math.min(9, Math.floor(p.opacity * 10)) !== opacity) return;
+          const radius = p.radius * size;
+          ambientCtx.moveTo(p.x + radius, p.y);
+          ambientCtx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+        });
+        ambientCtx.fill();
+      }
+    }
+    ambientCtx.globalAlpha = 1;
+  } else ambientParticles.forEach((p, idx) => {
+    if (activeAmbientType === "dust") {
+      p.x += p.vx * step;
+      p.y += p.vy * step;
+      p.opacity -= p.fadeSpeed * step;
       if (p.opacity <= 0) {
         ambientParticles[idx] = createAmbientParticle("dust", true);
         p = ambientParticles[idx];
       }
       ambientCtx.beginPath();
-      const grad = ambientCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
+      const grad = ambientCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * size);
       const color = idx % 2 === 0 ? accent1 : accent2;
       grad.addColorStop(0, hexToRgba(color, p.opacity));
       grad.addColorStop(1, hexToRgba(color, 0));
       ambientCtx.fillStyle = grad;
-      ambientCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ambientCtx.arc(p.x, p.y, p.radius * size, 0, Math.PI * 2);
       ambientCtx.fill();
     } else if (activeAmbientType === "rain") {
-      p.x += p.vx;
-      p.y += p.vy;
+      p.x += p.vx * step;
+      p.y += p.vy * step;
 
       ambientCtx.beginPath();
       ambientCtx.strokeStyle = p.color;
       ambientCtx.globalAlpha = p.opacity;
-      ambientCtx.lineWidth = 1.5;
+      ambientCtx.lineWidth = 1.5 * size;
       ambientCtx.moveTo(p.x, p.y);
-      ambientCtx.lineTo(p.x + p.vx * 1.5, p.y + p.length);
+      ambientCtx.lineTo(p.x + p.vx * 1.5, p.y + p.length * size);
       ambientCtx.stroke();
       ambientCtx.globalAlpha = 1.0;
 
@@ -1891,9 +2069,9 @@ function animateAmbient() {
         ambientParticles[idx] = createAmbientParticle("rain", true);
       }
     } else if (activeAmbientType === "matrix") {
-      p.y += p.vy;
+      p.y += p.vy * step;
 
-      if (Math.random() > 0.95) {
+      if (Math.random() < 1 - Math.pow(0.95, step)) {
         const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$+-*/=<>[]";
         p.char = chars[Math.floor(Math.random() * chars.length)];
       }
@@ -1902,7 +2080,7 @@ function animateAmbient() {
       const color = p.color === "accent" ? (idx % 2 === 0 ? accent1 : accent2) : p.color;
       ambientCtx.fillStyle = color;
       ambientCtx.globalAlpha = p.opacity;
-      ambientCtx.font = `${p.fontSize}px monospace`;
+      ambientCtx.font = `${p.fontSize * size}px monospace`;
       ambientCtx.fillText(p.char, p.x, p.y);
       ambientCtx.globalAlpha = 1.0;
 
@@ -1910,7 +2088,7 @@ function animateAmbient() {
         ambientParticles[idx] = createAmbientParticle("matrix", true);
       }
     } else if (activeAmbientType === "stars") {
-      p.z -= 4;
+      p.z -= 4 * step;
       if (p.z <= 0) {
         ambientParticles[idx] = createAmbientParticle("stars", true);
         p = ambientParticles[idx];
@@ -1925,23 +2103,23 @@ function animateAmbient() {
         ambientCtx.beginPath();
         ambientCtx.fillStyle = p.color;
         ambientCtx.globalAlpha = opacity;
-        ambientCtx.arc(px, py, radius, 0, Math.PI * 2);
+        ambientCtx.arc(px, py, radius * size, 0, Math.PI * 2);
         ambientCtx.fill();
         ambientCtx.globalAlpha = 1.0;
       } else {
         ambientParticles[idx] = createAmbientParticle("stars", true);
       }
     } else if (activeAmbientType === "fireflies") {
-      p.opacity += p.fadeDir * 0.01;
+      p.opacity += p.fadeDir * 0.01 * step;
       if (p.opacity >= 0.8) {
         p.fadeDir = -1;
       } else if (p.opacity <= 0.1) {
         p.fadeDir = 1;
       }
 
-      p.angle += (Math.random() * 0.2 - 0.1);
-      p.x += Math.cos(p.angle) * p.speed;
-      p.y += Math.sin(p.angle) * p.speed;
+      p.angle += (Math.random() * 0.2 - 0.1) * step;
+      p.x += Math.cos(p.angle) * p.speed * step;
+      p.y += Math.sin(p.angle) * p.speed * step;
 
       if (p.x < -10) p.x = w + 10;
       if (p.x > w + 10) p.x = -10;
@@ -1949,14 +2127,14 @@ function animateAmbient() {
       if (p.y > h + 10) p.y = -10;
 
       ambientCtx.beginPath();
-      const grad = ambientCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 2);
+      const grad = ambientCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 2 * size);
       const color = idx % 2 === 0 ? accent1 : "#a3e635";
       grad.addColorStop(0, hexToRgba(color, p.opacity));
       grad.addColorStop(0.4, hexToRgba(color, p.opacity * 0.4));
       grad.addColorStop(1, hexToRgba(color, 0));
       
       ambientCtx.fillStyle = grad;
-      ambientCtx.arc(p.x, p.y, p.radius * 2, 0, Math.PI * 2);
+      ambientCtx.arc(p.x, p.y, p.radius * 2 * size, 0, Math.PI * 2);
       ambientCtx.fill();
     }
   });
@@ -2127,13 +2305,22 @@ function renderCustomNavItems(items) {
   });
 }
 
-function updateAnimatedAvatars() {
+function updateAnimatedAvatars(scope = document) {
   const root = document.documentElement;
   const enabled = root.getAttribute("data-arizona-styler-enabled") === "true";
   const animAvatars = root.getAttribute("data-arizona-styler-animated-avatars") === "true";
 
   if (!enabled || !animAvatars) {
-    document.querySelectorAll('[data-arizona-styler-orig-src]').forEach(el => {
+    if (animatedAvatarObserver) {
+      animatedAvatarObserver.disconnect();
+      animatedAvatarObserver = null;
+    }
+    if (animatedAvatarTimer !== null) {
+      clearTimeout(animatedAvatarTimer);
+      animatedAvatarTimer = null;
+    }
+    pendingAnimatedAvatars.clear();
+    selectWithin(scope, '[data-arizona-styler-orig-src]').forEach(el => {
       if (el.tagName === 'IMG') {
         el.src = el.getAttribute('data-arizona-styler-orig-src');
         if (el.hasAttribute('data-arizona-styler-orig-srcset')) {
@@ -2147,44 +2334,86 @@ function updateAnimatedAvatars() {
       el.removeAttribute('data-arizona-styler-orig-src');
       el.removeAttribute('data-arizona-styler-orig-srcset');
     });
-    document.querySelectorAll('[data-arizona-styler-avatar-anim-checked]').forEach(el => {
+    selectWithin(scope, '[data-arizona-styler-avatar-anim-checked]').forEach(el => {
       el.removeAttribute('data-arizona-styler-avatar-anim-checked');
     });
     return;
   }
 
-  const elements = document.querySelectorAll('.avatar img, img.avatar, [class*="avatar"] img, .avatar[style*="background-image"]');
-  elements.forEach(el => {
-    if (el.getAttribute('data-arizona-styler-avatar-anim-checked') === 'true') {
-      return;
-    }
-    el.setAttribute('data-arizona-styler-avatar-anim-checked', 'true');
-
-    let src = '';
-    let isImg = el.tagName === 'IMG';
-    if (isImg) {
-      src = el.src;
-    } else {
-      src = el.style.backgroundImage;
-    }
-    
-    if (!src) return;
-    
-    const match = src.match(/\/avatars\/[sml]\//i);
-    if (match) {
-      if (!el.hasAttribute('data-arizona-styler-orig-src')) {
-        el.setAttribute('data-arizona-styler-orig-src', src);
-        if (isImg && el.srcset) {
-          el.setAttribute('data-arizona-styler-orig-srcset', el.srcset);
+  const elements = selectWithin(scope, '.avatar img:not([data-arizona-styler-avatar-anim-checked]), img.avatar:not([data-arizona-styler-avatar-anim-checked]), [class*="avatar"] img:not([data-arizona-styler-avatar-anim-checked]), .avatar[style*="background-image"]:not([data-arizona-styler-avatar-anim-checked])');
+  if (!animatedAvatarObserver) {
+    animatedAvatarObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          pendingAnimatedAvatars.add(entry.target);
+        } else {
+          pendingAnimatedAvatars.delete(entry.target);
         }
-      }
-      const newSrc = src.replace(/\/avatars\/[sml]\//i, '/avatars/o/');
-      if (isImg) {
-        el.src = newSrc;
-        el.removeAttribute('srcset');
-      } else {
-        el.style.backgroundImage = newSrc;
-      }
-    }
+      });
+      scheduleAnimatedAvatars();
+    }, { rootMargin: "100px" });
+  }
+  elements.forEach(el => {
+    const src = el.tagName === "IMG" ? el.src : el.style.backgroundImage;
+    if (!/\/avatars\/[sml]\//i.test(src)) return;
+    el.setAttribute("data-arizona-styler-avatar-anim-checked", "true");
+    animatedAvatarObserver.observe(el);
   });
 }
+
+function scheduleAnimatedAvatars() {
+  if (animatedAvatarTimer !== null || !pendingAnimatedAvatars.size || document.hidden) return;
+  animatedAvatarTimer = setTimeout(() => {
+    animatedAvatarTimer = null;
+    if (!activeEnabled || !activeTweaks?.animatedAvatars || document.hidden) return;
+    const batch = Array.from(pendingAnimatedAvatars).slice(0, 2);
+    batch.forEach(el => {
+      pendingAnimatedAvatars.delete(el);
+      if (animatedAvatarObserver) animatedAvatarObserver.unobserve(el);
+      if (el.isConnected) applyAnimatedAvatar(el);
+    });
+    scheduleAnimatedAvatars();
+  }, 32);
+}
+    
+function applyAnimatedAvatar(el) {
+  let src = '';
+  let isImg = el.tagName === 'IMG';
+  if (isImg) {
+    src = el.src;
+  } else {
+    src = el.style.backgroundImage;
+  }
+    
+  if (!src) return;
+
+  const match = src.match(/\/avatars\/[sml]\//i);
+  if (match) {
+    if (!el.hasAttribute('data-arizona-styler-orig-src')) {
+      el.setAttribute('data-arizona-styler-orig-src', src);
+      if (isImg && el.srcset) {
+        el.setAttribute('data-arizona-styler-orig-srcset', el.srcset);
+      }
+    }
+    const newSrc = src.replace(/\/avatars\/[sml]\//i, '/avatars/o/');
+    if (isImg) {
+      el.decoding = 'async';
+      el.fetchPriority = 'low';
+      el.src = newSrc;
+      el.removeAttribute('srcset');
+    } else {
+      el.style.backgroundImage = newSrc;
+    }
+  }
+}
+
+document.addEventListener("visibilitychange", () => {
+  ambientLastTime = null;
+  if (document.hidden) {
+    if (ambientAnimationId !== null) cancelAnimationFrame(ambientAnimationId);
+    ambientAnimationId = null;
+  } else {
+    scheduleAnimatedAvatars();
+    if (ambientCanvas && ambientAnimationId === null) animateAmbient();
+  }
+});
