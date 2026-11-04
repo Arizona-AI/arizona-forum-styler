@@ -1,9 +1,24 @@
 {
   "manifest_version": 3,
   "name": "Arizona Forum Styler",
-  "version": "1.10",
+  "version": "1.10.1",
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "arizona-forum-styler@arizona-ai.ru",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": [
+          "browsingActivity",
+          "websiteContent"
+        ]
+      }
+    }
   },
   "description": "Стилизатор для форума Arizona RP. 80+ готовых тем, редактор цветов, кастомизация фона (фото/видео), эффекты, курсоры и твики.",
   "permissions": [
@@ -29,8 +44,12 @@
         "*://forum.arizona-rp.com/*",
         "*://*.forum.arizona-rp.com/*"
       ],
-      "css": ["content.css"],
-      "js": ["content.js"],
+      "css": [
+        "content.css"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_start"
     }
   ],

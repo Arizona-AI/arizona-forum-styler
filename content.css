@@ -2075,7 +2075,7 @@ html[data-arizona-styler-enabled="true"][data-arizona-styler-hide-footer="true"]
 }
 
 
-html[data-arizona-styler-enabled="true"][data-arizona-styler-hide-mobile-engine-banner="true"] .block:has(.ae2-card) {
+html[data-arizona-styler-enabled="true"][data-arizona-styler-hide-mobile-engine-banner="true"] body[data-template="forum_list"] .p-body-pageContent > .block:first-child:not(.block--category):has(> .block-container):has(+ .block--category) {
   display: none !important;
 }
 

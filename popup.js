@@ -2066,24 +2066,21 @@ function saveAndBroadcast() {
 
 
 function broadcastToTabs() {
-  chrome.tabs.query({}, (tabs) => {
+  chrome.tabs.query({ url: ["*://forum.arizona-rp.com/*", "*://*.forum.arizona-rp.com/*"] }, (tabs) => {
     tabs.forEach((tab) => {
-      if (tab.url && tab.url.includes("forum.arizona-rp.com")) {
-        chrome.tabs.sendMessage(tab.id, {
-          type: "APPLY_THEME",
-          enabled: extensionEnabled,
-          settings: currentSettings,
-          bgSettings: globalBgSettings,
-          tweaks: globalTweaks,
-          activeThemeId: activeThemeId
-        }).catch(err => {
-
-        });
-      }
+      chrome.tabs.sendMessage(tab.id, {
+        type: "APPLY_THEME",
+        enabled: extensionEnabled,
+        settings: currentSettings,
+        bgSettings: globalBgSettings,
+        tweaks: globalTweaks,
+        activeThemeId: activeThemeId
+      }, () => {
+        void chrome.runtime.lastError;
+      });
     });
   });
 }
-
 
 function setupTabs() {
   tabButtons.forEach(btn => {
@@ -2672,7 +2669,12 @@ function setupInputListeners() {
       const path = btn.getAttribute("data-template-path");
       let result;
       try {
-        result = await chrome.runtime.sendMessage({ type: "RESOLVE_BACKGROUND_TEMPLATE", path });
+        result = await new Promise((resolve, reject) => {
+          chrome.runtime.sendMessage({ type: "RESOLVE_BACKGROUND_TEMPLATE", path }, response => {
+            if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
+            else resolve(response);
+          });
+        });
       } catch (error) {
         if (requestId === templateRequestId) alert("Не удалось проверить доступность шаблона.");
         return;
